@@ -1,5 +1,5 @@
 // import de dependencias
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 // import de components
 import InputComponent from "../../components/InputComponent";
@@ -8,6 +8,7 @@ import ButtonComponent from "../../components/ButtonComponent";
 // import de estilo e outros
 import * as S from './styles'
 import logoHorizontal from '../../assets/img/logo-horizontal.png'
+import { AuthContext } from "../../context/AuthContext";
 
 
 const Login = () => {
@@ -17,6 +18,8 @@ const Login = () => {
         senha: '',
     });
 
+    const { signIn } = useContext(AuthContext)
+
 
     const handleInputChange = (name, value) => {
         setInputValues({
@@ -25,9 +28,12 @@ const Login = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Valores do formulário:", inputValues);
+
+        const { login, senha } = inputValues
+
+        await signIn({login, senha})
     };
 
     return <S.Container>
