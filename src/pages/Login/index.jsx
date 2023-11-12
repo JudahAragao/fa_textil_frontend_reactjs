@@ -8,7 +8,7 @@ import ButtonComponent from "../../components/ButtonComponent";
 // import de estilo e outros
 import * as S from './styles'
 import logoHorizontal from '../../assets/img/logo-horizontal.png'
-import { AuthContext } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 
 const Login = () => {
@@ -18,8 +18,7 @@ const Login = () => {
         senha: '',
     });
 
-    const { signIn } = useContext(AuthContext)
-
+    const { signIn } = useAuth()
 
     const handleInputChange = (name, value) => {
         setInputValues({
