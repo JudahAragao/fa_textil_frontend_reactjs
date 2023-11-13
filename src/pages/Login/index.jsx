@@ -1,5 +1,5 @@
 // import de dependencias
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 
 // import de components
 import InputComponent from "../../components/InputComponent";

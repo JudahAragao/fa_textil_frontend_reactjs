@@ -9,8 +9,8 @@ const RoutesControl = () => {
         <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={
-                                                <PrivateRoutes role="ROLE_VENDEDOR" element={<Dashboard />} />
-                                            } />
+                <PrivateRoutes role="ROLE_VENDEDOR"><Dashboard /></PrivateRoutes>
+            } />
         </Routes>
     );
 };

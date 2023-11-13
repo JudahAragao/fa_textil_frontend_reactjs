@@ -4,31 +4,36 @@ import { Route, Routes, Navigate } from 'react-router-dom';  // Importe Routes
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
-const PrivateRoutes = ({ role, element: Element, ...rest }) => {
-    const [permissions, setPermissions] = useState();
+const PrivateRoutes = ({ role, children }) => {
+
     const { userLogged } = useAuth();
+    let [permissions, setPermissions] = useState('');
+
+    const loadRole = async () => {
+        const userAuthorities = userLogged().decodedToken?.perfilAcessoId;
+        const response = await api.get(`/perfilacesso/${userAuthorities}`);
+
+        const findRole = response.data.nomePerfilAcesso;
+
+        setPermissions(findRole);
+        console.log(permissions)
+    };
 
     useEffect(() => {
-        const loadRole = async () => {
-            const response = await api.get('/perfilacesso');
-            const findRole = response.data.find((r) => r.nomePerfilAcesso === role);
-            setPermissions(findRole.nomePerfilAcesso === userLogged().role);
-            // console.log(findRole.nomePerfilAcesso === userLogged().role)
-        };
 
         loadRole();
-    }, []);
+    }, [userLogged]);
 
-    if (!userLogged().logged) {
-        return <Navigate to="/login" replace={true} />;
+
+    if (userLogged().isAuthenticated === false) {
+        return <Navigate to="/login" />;
     }
 
-    if (!role && userLogged().logged) {
-        // Use 'element' prop instead of returning a Route directly
-        return <Element {...rest} />;
+    if (!role || permissions) {
+        return children;
     }
 
-    return permissions ? <Element {...rest} /> : <Navigate to="/login" replace={true} />;
+    return permissions ? children : <Navigate to="/login" />
 };
 
 export default PrivateRoutes;
