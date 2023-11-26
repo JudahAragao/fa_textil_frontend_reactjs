@@ -1,39 +1,18 @@
-// Em PrivateRoutes.js
-import React, { useEffect, useState } from 'react';
-import { Route, Routes, Navigate } from 'react-router-dom';  // Importe Routes
-import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
+import React from "react";
+import { Route, Redirect } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-const PrivateRoutes = ({ role, children }) => {
+const PrivateRoute = ({ component: Component, permission, ...rest }) => {
+    const { userLogged, hasPermission } = useAuth()
 
-    const { userLogged } = useAuth();
-    let [permissions, setPermissions] = useState('');
+    console.log(userLogged().isAuthenticated, hasPermission(permission))
+    return (
+      <Route {...rest} render={(props) => (
+        (userLogged().isAuthenticated && hasPermission(permission))
+          ? <Component {...props} />
+          : <Redirect to={"/login"} />
+      )} />
+    )
+  }
 
-    const loadRole = async () => {
-        const userAuthorities = userLogged().decodedToken?.perfilAcessoId;
-        const response = await api.get(`/perfilacesso/${userAuthorities}`);
-
-        const findRole = response.data.nomePerfilAcesso;
-
-        setPermissions(findRole);
-        console.log(permissions)
-    };
-
-    useEffect(() => {
-
-        loadRole();
-    }, [userLogged]);
-
-
-    if (userLogged().isAuthenticated === false) {
-        return <Navigate to="/login" />;
-    }
-
-    if (!role || permissions) {
-        return children;
-    }
-
-    return permissions ? children : <Navigate to="/login" />
-};
-
-export default PrivateRoutes;
+export default PrivateRoute;

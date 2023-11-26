@@ -36,28 +36,37 @@ const AuthProvider = ({ children }) => {
         localStorage.setItem('@PermissionYT:token', newToken);
     }, []);
 
-    // const userLogged = useCallback(() => {
-    //     const token = localStorage.getItem('@PermissionYT:token')
-    //     if (token)
-    //         return true;
-
-    //     return false
-    // }, [])
-
     const userLogged = useCallback(() => {
         const storedToken = localStorage.getItem('@PermissionYT:token');
-        const decodedToken = storedToken ? jwtDecode(storedToken) : null;
 
         if (storedToken) {
-            return { isAuthenticated: true, decodedToken };
+            return { isAuthenticated: true }
         } else {
-            return {isAuthenticated: false, decodedToken: null}
+            return { isAuthenticated: false }
         }
 
-        
+
     }, []);
 
-    return <AuthContext.Provider value={{ token, signIn, userLogged }}>
+    const hasPermission = (roleNecessary) => {
+        const storedToken = localStorage.getItem('@PermissionYT:token');
+        const decodedToken = jwtDecode(storedToken);
+        const role = decodedToken.perfilAcesso
+
+        console.log("hasPermission: " + decodedToken.perfilAcesso)
+
+        if (!role) {
+            return false;
+        }
+
+        if (!roleNecessary) {
+            return true;
+        }
+
+        return role === roleNecessary
+    }
+
+    return <AuthContext.Provider value={{ token, signIn, userLogged, hasPermission }}>
         {children}
     </AuthContext.Provider>
 }
