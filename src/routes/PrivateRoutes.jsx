@@ -3,32 +3,10 @@ import { Route, Redirect } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const PrivateRoute = ({ component: Component, permission, ...rest }) => {
-  const { userLogged, hasPermission, /*checkToken*/ } = useAuth()
-
-  // const [validated, setValidated] = useState(async()=>{
-  //   try {
-  //     const tokenIsValid = await checkToken();
-  //     return tokenIsValid;
-  //   } catch (error) {
-  //     return false;
-  //   }
-  // });
-
-  // useEffect(() => {
-  //   const validateToken = async () => {
-  //     try {
-  //       const tokenIsValid = await checkToken();
-  //       setValidated(tokenIsValid);
-  //     } catch (error) {
-  //       setValidated(false);
-  //     }
-  //   };
+  const { userLogged, hasPermission } = useAuth()
   
-  //   validateToken();
-  // }, [checkToken]);
-
   return <Route {...rest} render={(props) => (
-    (userLogged().isAuthenticated && hasPermission(permission) /*&& validated*/)
+    (userLogged().isAuthenticated && hasPermission(permission))
       ? <Component {...props} />
       : <Redirect to={"/login"} />
   )} />

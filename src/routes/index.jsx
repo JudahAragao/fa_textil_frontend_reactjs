@@ -4,14 +4,29 @@ import { Switch, Route } from 'react-router-dom';
 import PrivateRoute from './PrivateRoutes';
 import Dashboard from '../pages/Dashboard';
 import Login from '../pages/Login';
+import NavMenu from '../components/NavMenu';
+import MenuSidebar from '../components/MenuSidebar';
 
 const RoutesControl = () => {
-  return (
+
+  const privateView = true
+
+  return <div>
+
     <Switch>
       <Route exact={true} path="/login" component={Login} />
-      <PrivateRoute permission="ROLE_ADMIN" exact={true} path="/dashboard" component={Dashboard} />
+      {
+        privateView && <>
+          <NavMenu />
+
+          <div style={{ display: 'flex' }}>
+            <MenuSidebar />
+            <PrivateRoute permission="ROLE_ADMIN" exact={true} path="/dashboard" component={Dashboard} />
+          </div>
+        </>
+      }
     </Switch>
-  );
+  </div>
 };
 
 export default RoutesControl;

@@ -7,7 +7,7 @@ import ButtonComponent from "../../components/ButtonComponent";
 
 // import de estilo e outros
 import * as S from './styles'
-import logoHorizontal from '../../assets/img/logo-horizontal.png'
+import logoVertical from '../../assets/img/logo-vertical.png'
 import { useAuth } from "../../context/AuthContext";
 
 
@@ -39,7 +39,7 @@ const Login = () => {
         <S.BodyForm>
 
             <S.ContainerImage>
-                <img src={logoHorizontal} alt="Logo Horizontal" />
+                <img src={logoVertical} alt="Logo Vertical" />
             </S.ContainerImage>
 
             <InputComponent
