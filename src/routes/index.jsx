@@ -9,7 +9,7 @@ const RoutesControl = () => {
   return (
     <Switch>
       <Route exact={true} path="/login" component={Login} />
-      <PrivateRoute permission="ROLE_VENDEDOR" exact={true} path="/dashboard" component={Dashboard} />
+      <PrivateRoute permission="ROLE_ADMIN" exact={true} path="/dashboard" component={Dashboard} />
     </Switch>
   );
 };
