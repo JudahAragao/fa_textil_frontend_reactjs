@@ -63,8 +63,6 @@ const FormClienteFisicoComponent = ({ onUpdateRegister, mode, dado, initialClien
             await api.put(`/clientepfisica/${dado.clientePFisicaId}`, dataToSend);
         }
 
-        console.log(onUpdateRegister)
-
         await onUpdateRegister();
     };
 

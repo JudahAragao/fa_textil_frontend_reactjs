@@ -60,35 +60,34 @@ const Clientes = ({ onOpen, onClose }) => {
     ]
 
     const getCliente = async (mode, id) => {
-        const response = await api.get("/clientepfisica")
+        if (mode === "all") {
+            await api.get("/clientepfisica").then(response => {
+                setDados(response.data)
+                setStatusCliente(oldStatus => ({
+                    ...oldStatus,
+                    juridica: response.data.filter(item => item.clienteId === 2).length,
+                    fisica: response.data.filter(item => item.clienteId === 1).length,
+                    ativo: response.data.filter(item => item.ativo === 1).length,
+                    inativo: response.data.filter(item => item.ativo === 0).length,
+                    frequentes: 0,
+                    total: response.data.length
+                }))
+            })
+        } else if (mode === "one") {
+            await api.get(`/clientepfisica/${id}`).then(response => {
+                setDado(response.data)
+            })
+        }
 
-        setDados(response.data)
-        setStatusCliente(oldStatus => ({
-            ...oldStatus,
-            juridica: response.data.filter(item => item.clienteId === 2).length,
-            fisica: response.data.filter(item => item.clienteId === 1).length,
-            ativo: response.data.filter(item => item.ativo === 1).length,
-            inativo: response.data.filter(item => item.ativo === 0).length,
-            frequentes: 0,
-            total: response.data.length
-        }))
     }
 
-    const atualizarListaCliente = useCallback(() => {
-        getCliente()
-    }, [])
+    const atualizarListaCliente = async () => {
+        await getCliente('all')
+    }
 
     useEffect(() => {
-        getCliente()
+        getCliente('all')
     }, [])
-
-    useEffect(() => {
-        if (dado && Object.keys(dado).length > 0 && onOpen) {
-            onOpen(<CadastroClienteComponent mode={'atualizacao'} dado={dado} />);
-        } else if (Object.keys(dado).length === 0 && onClose) {
-            onClose();
-        }
-    }, [dado]);
 
     return <S.Container>
         <S.HeaderContainer>
@@ -137,15 +136,14 @@ const Clientes = ({ onOpen, onClose }) => {
                             <S.TableCell style={{ textAlign: 'center', width: '80px' }}>{row.ativo > 0 && row.ativo === 1 ? 'Ativo' : 'Inativo'}</S.TableCell>
                             <S.TableCell style={{ textAlign: 'center', width: '150px' }}>{row.dataCadastro}</S.TableCell>
                             <S.TableHeaderCell style={{ width: '90px' }}>
-                                <ButtonComponent
-                                    label="+"
-                                    onClick={() => {
-                                        onOpen(<CadastroClienteComponent onUpdateRegister={atualizarListaCliente} mode={'atualizacao'} dado={row} />);
+                                <button
+                                    onClick={async () => {
+                                        await getCliente('one', row.clientePFisicaId);
+                                        onOpen(<CadastroClienteComponent mode={'atualizacao'} dado={dado} />);
                                     }}
-                                    className="custom-button"
-                                    typebtn="small"
-                                    bgcolor="linear-gradient(85deg, #10317A 6.37%, #0065BA 73.64%)"
-                                />
+                                >
+                                    +
+                                </button>
                             </S.TableHeaderCell>
                         </S.TableRow>
                     ))}

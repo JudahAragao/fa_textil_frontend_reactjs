@@ -68,6 +68,7 @@ export const BtnContent = styled.div`
 //Corpo da página
 export const BodyContainer = styled.div`
     width: 100%;
+    display: flex;
 `
 
 export const TableWrapper = styled.div`
