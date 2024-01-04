@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import * as S from './styles'
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { NavLink, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 
 const links = [
     {
@@ -30,7 +30,7 @@ const links = [
         name: 'Pedidos Venda'
     },
     {
-        route: '/orçamento',
+        route: '/orcamento',
         icon: <S.OrcamentosIcon />,
         name: 'Orçamentos'
     },
@@ -43,21 +43,32 @@ const links = [
 
 const MenuSidebar = () => {
     const [activeItem, setActiveItem] = useState(0);
-
+    const location = useLocation();
 
     const handleClickLink = (index) => {
         setActiveItem(index);
     };
 
+    useEffect(() => {
+        // Encontrar o índice do link cuja rota coincide com a rota atual
+        const foundIndex = links.findIndex((link) => link.route === location.pathname);
+
+        // Atualizar o estado apenas se encontrarmos a correspondência
+        if (foundIndex !== -1) {
+            setActiveItem(foundIndex);
+        }
+    }, [location.pathname]);
+
     return <S.Container>
         <ul>
-            {
-                links.map((link, index) => (
-                    <li key={index} onClick={()=>handleClickLink(index)} className={index === activeItem ? "active" : ""}>
-                        <Link to={link.route}>{link.icon}{link.name}</Link>
-                    </li>
-                ))
-            }
+            {links.map((link, index) => (
+                <li key={index} onClick={() => handleClickLink(index)} className={index === activeItem ? "active" : ""}>
+                    <NavLink to={link.route} activeClassName="active">
+                        {link.icon}
+                        {link.name}
+                    </NavLink>
+                </li>
+            ))}
         </ul>
     </S.Container>
 }

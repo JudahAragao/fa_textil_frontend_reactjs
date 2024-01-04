@@ -2,18 +2,18 @@ import React from 'react';
 
 import * as S from './styles'
 
-function InputComponent({ name, type, label, placeholder, value, onChange }) {
+function InputComponent({ name, label, value, onChange, margin, type = 'text', placeholder }) {
 
   return (
-    <S.Container>
+    <S.Container margin={margin}>
       {label && <label htmlFor={name}>{label}</label>}
       <input
         id={name}
         name={name}
-        type={type || 'text'}
+        type={type}
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange(name, e.target.value)}
+        onChange={onChange}
       />
     </S.Container>
   );

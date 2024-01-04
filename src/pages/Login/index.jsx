@@ -20,7 +20,10 @@ const Login = () => {
 
     const { signIn } = useAuth()
 
-    const handleInputChange = (name, value) => {
+    const handleInputChange = (event) => {
+
+        const { name, value } = event.target;
+
         setInputValues({
             ...inputValues,
             [name]: value,
@@ -48,6 +51,7 @@ const Login = () => {
                 placeholder="Digite seu nome de usuário"
                 value={inputValues.login}
                 onChange={handleInputChange}
+                margin={'m-lg'}
             />
 
             <InputComponent
@@ -57,12 +61,14 @@ const Login = () => {
                 placeholder="Digite sua senha"
                 value={inputValues.senha}
                 onChange={handleInputChange}
+                margin={'m-lg'}
             />
 
             <ButtonComponent
                 label="Entrar!"
                 onClick={handleSubmit}
                 className="custom-button"
+                typebtn="large"
                 bgcolor="linear-gradient(89deg, #10317A -7.34%, #0065BA 52.69%, #FF6E00 109.09%)"
             />
         </S.BodyForm>
