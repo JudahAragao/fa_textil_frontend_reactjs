@@ -32,6 +32,10 @@ const TableComponent = ({ data, columns, onUpdateRegister, exibirQtdeOptions, pa
         />
     );
 
+    const ativoTemplate = (rowData) => (
+        <span>{rowData.ativo === 1 ? 'Ativo' : 'Inativo'}</span>
+    );
+
     return <DataTable
         value={data}
         paginator
@@ -53,8 +57,8 @@ const TableComponent = ({ data, columns, onUpdateRegister, exibirQtdeOptions, pa
                 header={col.title}
                 filter
                 filterMatchMode="contains"
-                className="custom-column-header"
-                body={col.key === 'verMais' ? (rowData) => viewMoreTemplate(rowData) : undefined}
+                className="custom-column-row"
+                body={col.key === 'verMais' ? (rowData) => viewMoreTemplate(rowData) : (col.key === 'ativo' ? (rowData) => ativoTemplate(rowData) : undefined)}
             />
         ))}
     </DataTable>

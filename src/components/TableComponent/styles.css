@@ -1,0 +1,17 @@
+.custom-header .p-datatable-thead tr th,
+.p-paginator-bottom,
+.p-paginator-bottom .p-dropdown,
+.p-paginator-bottom button,
+.p-paginator-bottom span{
+  background-color: #CBD1DC;
+  color: #10317A;
+  /* Adicione outros estilos conforme necessário */
+}
+
+.p-datatable-tbody tr {
+    color: #10317A;
+}
+
+.p-datatable-tbody tr:nth-child(even) {
+    background-color: #EBEBEB;
+}
