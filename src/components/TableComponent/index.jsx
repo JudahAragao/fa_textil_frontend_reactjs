@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SelectComponent from "../SelectComponent";
+import { FaRegEdit } from "react-icons/fa";
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -13,18 +14,16 @@ import CadastroClienteComponent from "../CadastroClienteComponent";
 
 import './styles.css'
 
-const TableComponent = ({ data, columns, onUpdateRegister, exibirQtdeOptions, page, setPage, total, itemsPerPage, setItemsPerPage, onOpen }) => {
-
-    console.log({ data, columns })
+const TableComponent = ({ data, columns, onUpdateRegister, onOpen, component: Component }) => {
 
     const paginatorLeft = <Button type="button" icon="pi pi-refresh" className="p-button-text" />;
     const paginatorRight = <Button type="button" icon="pi pi-cloud" className="p-button-text" />;
 
     const viewMoreTemplate = (rowData) => (
         <ButtonComponent
-            label="+"
+            label={<FaRegEdit style={{fontSize:'20px'}} />}
             onClick={() => {
-                onOpen(<CadastroClienteComponent onUpdateRegister={onUpdateRegister} mode={'atualizacao'} dado={rowData} />);
+                onOpen(<Component onUpdateRegister={onUpdateRegister} mode={'atualizacao'} dado={rowData} />);
             }}
             className="custom-button"
             typebtn="small"

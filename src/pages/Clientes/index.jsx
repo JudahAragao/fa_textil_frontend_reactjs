@@ -6,7 +6,6 @@ import * as S from './styles'
 import { useEffect } from "react";
 import api from "../../services/api";
 import CadastroClienteComponent from "../../components/CadastroClienteComponent";
-import SelectComponent from "../../components/SelectComponent";
 import TableComponent from "../../components/TableComponent";
 
 const Clientes = ({ onOpen, onClose }) => {
@@ -15,9 +14,6 @@ const Clientes = ({ onOpen, onClose }) => {
 
     // todos os clientes
     const [dados, setDados] = useState([]);
-
-    // somente um cliente
-    const [dado, setDado] = useState({})
 
     const [statusCliente, setStatusCliente] = useState({
         juridica: null,
@@ -84,16 +80,6 @@ const Clientes = ({ onOpen, onClose }) => {
         getCliente()
     }, [])
 
-    const paginatedData = useMemo(() => {
-        return dados.slice((page - 1) * 10, page * 10);
-    }, [dados, page]);
-
-    const exibirQtde = [
-        { value: '10', label: 'Exibir 10' },
-        { value: '15', label: 'Exibir 15' },
-        // Adicione mais opções conforme necessário
-    ];
-
     return <S.Container>
         <S.HeaderContainer>
             <S.BtnContent>
@@ -121,7 +107,7 @@ const Clientes = ({ onOpen, onClose }) => {
 
         <S.BodyContainer>
             <TableComponent
-                data={paginatedData}
+                data={dados}
                 columns={[
                     { key: 'nome', title: 'Nome' },
                     { key: 'telefone', title: 'Telefone' },
@@ -133,14 +119,9 @@ const Clientes = ({ onOpen, onClose }) => {
                     { key: 'dataCadastro', title: 'Data Cadastro'},
                     { key: 'verMais', title: 'Ver Mais' },
                 ]}
-                exibirQtdeOptions={exibirQtde}
-                page={page}
-                setPage={setPage}
-                total={dados.length}
-                itemsPerPage={10} // Defina a quantidade padrão de itens por página
-                setItemsPerPage={(value) => console.log('Selecionado:', value)} // Implemente conforme necessário
                 onOpen={onOpen}
                 onUpdateRegister={atualizarListaCliente}
+                component={CadastroClienteComponent}
             />
         </S.BodyContainer>
     </S.Container>
