@@ -109,8 +109,14 @@ export const TableCell = styled.td`
 `;
 
 export const TablePagination = styled.div`
-    position: absolute;
-    right: 0;
-    bottom: 0;
     padding: 10px;
+`;
+
+export const TableFoot = styled.tfoot`
+    background-color: #CBD1DC;
+    width: 100%;
+`
+
+export const TableCellFoot = styled.td`
+    width: 100%;
 `;

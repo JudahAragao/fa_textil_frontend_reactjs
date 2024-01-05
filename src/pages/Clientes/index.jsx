@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 import ButtonComponent from "../../components/ButtonComponent";
 
@@ -6,6 +6,8 @@ import * as S from './styles'
 import { useEffect } from "react";
 import api from "../../services/api";
 import CadastroClienteComponent from "../../components/CadastroClienteComponent";
+import SelectComponent from "../../components/SelectComponent";
+import TableComponent from "../../components/TableComponent";
 
 const Clientes = ({ onOpen, onClose }) => {
 
@@ -82,13 +84,15 @@ const Clientes = ({ onOpen, onClose }) => {
         getCliente()
     }, [])
 
-    useEffect(() => {
-        if (dado && Object.keys(dado).length > 0 && onOpen) {
-            onOpen(<CadastroClienteComponent mode={'atualizacao'} dado={dado} />);
-        } else if (Object.keys(dado).length === 0 && onClose) {
-            onClose();
-        }
-    }, [dado]);
+    const paginatedData = useMemo(() => {
+        return dados.slice((page - 1) * 10, page * 10);
+    }, [dados, page]);
+
+    const exibirQtde = [
+        { value: '10', label: 'Exibir 10' },
+        { value: '15', label: 'Exibir 15' },
+        // Adicione mais opções conforme necessário
+    ];
 
     return <S.Container>
         <S.HeaderContainer>
@@ -116,47 +120,28 @@ const Clientes = ({ onOpen, onClose }) => {
         </S.HeaderContainer>
 
         <S.BodyContainer>
-            <S.TableWrapper>
-                <S.TableHeader>
-                    <S.TableHeaderCell style={{ textAlign: 'left' }}>Cliente</S.TableHeaderCell>
-                    <S.TableHeaderCell style={{ width: '150px' }}>Telefone</S.TableHeaderCell>
-                    <S.TableHeaderCell style={{ textAlign: 'left' }}>E-mail</S.TableHeaderCell>
-                    <S.TableHeaderCell style={{ textAlign: 'left', width: '400px' }}>Endereço</S.TableHeaderCell>
-                    <S.TableHeaderCell style={{ width: '80px' }}>Situação</S.TableHeaderCell>
-                    <S.TableHeaderCell style={{ width: '150px' }}>Data Cadastro</S.TableHeaderCell>
-                    <S.TableHeaderCell style={{ width: '90px' }}>Ver Mais</S.TableHeaderCell>
-                </S.TableHeader>
-
-                <S.TableBody>
-                    {dados.slice((page - 1) * 10, page * 10).map((row, index) => (
-                        <S.TableRow key={index}>
-                            <S.TableCell>{row.nome}</S.TableCell>
-                            <S.TableCell style={{ textAlign: 'center', width: '150px' }}>{row.telefone}</S.TableCell>
-                            <S.TableCell>{row.email}</S.TableCell>
-                            <S.TableCell style={{ width: '400px' }}>{row.logradouro}, N° {row.numeroImovel}, {row.bairro}</S.TableCell>
-                            <S.TableCell style={{ textAlign: 'center', width: '80px' }}>{row.ativo > 0 && row.ativo === 1 ? 'Ativo' : 'Inativo'}</S.TableCell>
-                            <S.TableCell style={{ textAlign: 'center', width: '150px' }}>{row.dataCadastro}</S.TableCell>
-                            <S.TableHeaderCell style={{ width: '90px' }}>
-                                <ButtonComponent
-                                    label="+"
-                                    onClick={() => {
-                                        onOpen(<CadastroClienteComponent onUpdateRegister={atualizarListaCliente} mode={'atualizacao'} dado={row} />);
-                                    }}
-                                    className="custom-button"
-                                    typebtn="small"
-                                    bgcolor="linear-gradient(85deg, #10317A 6.37%, #0065BA 73.64%)"
-                                />
-                            </S.TableHeaderCell>
-                        </S.TableRow>
-                    ))}
-                </S.TableBody>
-
-                <S.TablePagination
-                    page={page}
-                    setPage={setPage}
-                    total={dados.length}
-                />
-            </S.TableWrapper>
+            <TableComponent
+                data={paginatedData}
+                columns={[
+                    { key: 'nome', title: 'Nome' },
+                    { key: 'telefone', title: 'Telefone' },
+                    { key: 'email', title: 'E-mail' },
+                    { key: 'logradouro', title: 'Logradouro' },
+                    { key: 'bairro', title: 'Bairro' },
+                    { key: 'numeroImovel', title: 'N°' },
+                    { key: 'ativo', title: 'Situação' },
+                    { key: 'dataCadastro', title: 'Data Cadastro'},
+                    { key: 'verMais', title: 'Ver Mais' },
+                ]}
+                exibirQtdeOptions={exibirQtde}
+                page={page}
+                setPage={setPage}
+                total={dados.length}
+                itemsPerPage={10} // Defina a quantidade padrão de itens por página
+                setItemsPerPage={(value) => console.log('Selecionado:', value)} // Implemente conforme necessário
+                onOpen={onOpen}
+                onUpdateRegister={atualizarListaCliente}
+            />
         </S.BodyContainer>
     </S.Container>
 
