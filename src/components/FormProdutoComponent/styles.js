@@ -81,11 +81,11 @@ export const Container = styled.div`
             }
 
             .form-material {
-                z-index: ${props => props.materialIsOpen === true ? '1' : '0'};
+                z-index: ${props => props.materialIsOpen === true ? '1' : '-1'};
             }
 
             .form-servico {
-                z-index: ${props => props.servicoIsOpen === true ? '1' : '0'};
+                z-index: ${props => props.servicoIsOpen === true ? '1' : '-1'};
             }
         }
 
@@ -106,13 +106,27 @@ export const Table = styled.table`
     .row-form{
         background-color: #FFF;
     }
+
+    tbody {
+        tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #EBEBEB;
+        }
+
+        tr:last-child {
+            background-color: #ffffff;
+        }
+    }
 `;
 
 export const Button = styled.button`
     width: 30px;
     height: 30px;
     border-radius: 5px;
-    background-color: #07BC2F;
+    background-color: ${props => props.bg};
     color: white;
     border: none;
     cursor: pointer;
@@ -123,6 +137,6 @@ export const Button = styled.button`
     transition-duration: 0.4s;
 
     &:hover {
-        background-color: #45a049;
+        background-color: ${props => props.bgHover};
     }
 `;

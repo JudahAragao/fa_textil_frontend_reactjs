@@ -13,56 +13,53 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
     const [produto, setProduto] = useState({
         descricaoProduto: "",
         valorProduto: 0,
-        tamanhos: [],  // Inicializar tamanhos como um array vazio
+        tamanho: '',
     });
 
-    const [tamanho, setTamanho] = useState({
-        tamanho: "",
-        demandas: [
-            {
-                descricao: "",
-                unidadeMedida: "UN",
-                qtdeDemandada: 0,
-                custoUnitarioDemanda: 0,
-                tipoDemanda: "Material",
-            },
-        ],
-    });
+    const [demanda, setDemanda] = useState({
+        descricaoDemanda: '',
+        unidadeMedida: '',
+        qtdeDemandada: '',
+        custoUnitarioDemanda: '',
+        tipoDemanda: 'Material'
+    })
+
+    const [demandas, setDemandas] = useState([])
+    const [cadProduto, setCadProduto] = useState({})
 
     const [materialIsOpen, setMaterialIsOpen] = useState(true);
     const [servicoIsOpen, setServicoIsOpen] = useState(false);
 
-    const handleProdutoInputChange = (e) => {
+    const handleInputChangeProduto = (e) => {
         const { name, value } = e.target;
         setProduto((prevProduto) => ({ ...prevProduto, [name]: value }));
     };
 
-    const handleTamanhoInputChange = (e) => {
+    const handleInputChangeDemanda = (e) => {
         const { name, value } = e.target;
-        setTamanho((prevTamanho) => ({ ...prevTamanho, demandas: [{ ...prevTamanho.demandas[0], [name]: value }] }));
-    };
-
-    const handleAddTamanho = () => {
-        setProduto((prevProduto) => ({
-            ...prevProduto,
-            tamanhos: [...prevProduto.tamanhos, { tamanho: "", demandas: [] }],
+        setDemanda(prevDemanda => ({
+            ...prevDemanda,
+            [name]: value
         }));
     };
 
-    const handleAddDemanda = () => {
-        setTamanho((prevTamanho) => ({
-            ...prevTamanho,
-            demandas: [
-                ...prevTamanho.demandas,
-                {
-                    descricao: tamanho.descricaoDemanda,
-                    unidadeMedida: tamanho.unidadeMedida,
-                    qtdeDemandada: tamanho.qtdeDemandada,
-                    custoUnitarioDemanda: tamanho.custoUnitarioDemanda,
-                    tipoDemanda: tamanho.tipoDemanda,
-                },
-            ],
-        }));
+    const handleAddDemanda = (e) => {
+        e.preventDefault()
+        setDemandas(prevDemandas => ([...prevDemandas, demanda]))
+
+        setDemanda({
+            descricaoDemanda: '',
+            unidadeMedida: '',
+            qtdeDemandada: '',
+            custoUnitarioDemanda: '',
+            tipoDemanda: 'Material'
+        });
+    }
+
+    const handleRemoveDemanda = (index) => {
+        // Cria uma cópia do array de demandas sem o item a ser removido
+        const updatedDemandas = demandas.filter((_, i) => i !== index);
+        setDemandas(updatedDemandas);
     };
 
     const handleSubmit = async (e) => {
@@ -72,24 +69,21 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
             produto: {
                 descricao: produto.descricaoProduto,
                 valorProduto: produto.valorProduto,
-                tamanhos: produto.tamanhos.map((tamanho) => ({
-                    tamanho: tamanho.tamanho,
-                    demandas: tamanho.demandas.map((demanda) => ({
-                        descricao: demanda.descricao,
-                        unidadeMedida: demanda.unidadeMedida,
-                        qtdeDemandada: demanda.qtdeDemandada,
-                        custoUnitarioDemanda: demanda.custoUnitarioDemanda,
-                    })),
-                })),
+                tamanhos: {
+                    tamanho: produto.tamanho,
+                    demandas: demandas,
+                },
             },
         };
+
+        setCadProduto(dataToSend)
 
         console.log(dataToSend)
 
         if (mode === "cadastro") {
-            await api.post('/produto', dataToSend);
+            await api.post('/produto', cadProduto);
         } else if (mode === "atualizacao") {
-            await api.put(`/produto/${dado.produtoId}`, dataToSend);
+            await api.put(`/produto/${dado.produtoId}`, cadProduto);
         }
 
         await onUpdateRegister();
@@ -121,8 +115,8 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
                 <InputComponent
                     name="descricaoProduto"
                     label="Descrição:"
-                    value={produto.descricaoProduto}  // Alterado para produto.descricaoProduto
-                    onChange={handleProdutoInputChange}  // Alterado para handleProdutoInputChange
+                    value={produto.descricaoProduto}
+                    onChange={handleInputChangeProduto}
                     margin={'m-sm'}
                 />
             </div>
@@ -130,8 +124,8 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
                 <InputComponent
                     name="valorProduto"
                     label="Valor:"
-                    value={produto.valorProduto}  // Alterado para produto.valorProduto
-                    onChange={handleProdutoInputChange}  // Alterado para handleProdutoInputChange
+                    value={produto.valorProduto}
+                    onChange={handleInputChangeProduto}
                     margin={'m-sm'}
                 />
             </div>
@@ -139,8 +133,8 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
                 <InputComponent
                     name="tamanho"
                     label="Tamanho:"
-                    value={tamanho.tamanho}  // Alterado para tamanho.tamanho
-                    onChange={handleTamanhoInputChange}  // Alterado para handleTamanhoInputChange
+                    value={produto.tamanho}
+                    onChange={handleInputChangeProduto}
                     margin={'m-sm'}
                     type="select"
                     options={[
@@ -150,7 +144,7 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
                         { value: 'G', label: 'G' },
                         { value: 'GG', label: 'GG' },
                         { value: 'XG', label: 'XG' },
-                        // Adicione mais opções conforme necessário
+                        
                     ]}
                 />
             </div>
@@ -183,33 +177,36 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {produto.tamanhos.map((tamanho, tamanhoIndex) => (
-                                <React.Fragment key={tamanhoIndex}>
-                                    {Array.isArray(tamanho.demandas) && tamanho.demandas.map((item, demandaIndex) => (
-                                        <tr key={demandaIndex}>
-                                            <td>{item && item.descricao}</td>
-                                            <td>{item && item.unidadeMedida}</td>
-                                            <td>{item && item.qtdeDemandada}</td>
-                                            <td>{item && item.custoUnitarioDemanda}</td>
-                                            <td>{item && item.custoUnitarioDemanda * (item && item.qtdeDemandada)}</td>
+                            {
+                                demandas.map((demanda, demandaIndex) => {
+                                    if (demanda.tipoDemanda === "Material") {
+                                        return <tr key={demandaIndex}>
+                                            <td> <p style={{ margin: '0 0 0 10px' }}>{demanda && demanda.descricaoDemanda}</p> </td>
+                                            <td style={{ textAlign: 'center' }}>{demanda && demanda.unidadeMedida}</td>
+                                            <td style={{ textAlign: 'center' }}>{demanda && demanda.qtdeDemandada}</td>
+                                            <td style={{ textAlign: 'center' }}>{demanda && demanda.custoUnitarioDemanda}</td>
+                                            <td style={{ textAlign: 'center' }}>{demanda && demanda.custoUnitarioDemanda * (demanda && demanda.qtdeDemandada)}</td>
+                                            <td style={{ textAlign: 'center' }}>
+                                                <S.Button bg={'#D80000'} bgHover={'#b30505'} onClick={() => handleRemoveDemanda(demandaIndex)}>X</S.Button>
+                                            </td>
                                         </tr>
-                                    ))}
-                                </React.Fragment>
-                            ))}
+                                    }
+                                })
+                            }
                             <tr className="row-form">
                                 <td style={{ width: '315px', padding: '0 5px' }}>
                                     <InputComponent
-                                        name={`descricao`}
-                                        value={tamanho.demandas[0].descricao}
-                                        onChange={(e) => handleTamanhoInputChange(e)}
+                                        name={`descricaoDemanda`}
+                                        value={demanda.descricaoDemanda}
+                                        onChange={(e) => handleInputChangeDemanda(e)}
                                         margin={'m-sm'}
                                     />
                                 </td>
                                 <td style={{ width: '80px', padding: '0 5px' }}>
                                     <InputComponent
                                         name={`unidadeMedida`}
-                                        value={tamanho.demandas[0].unidadeMedida}
-                                        onChange={(e) => handleTamanhoInputChange(e)}
+                                        value={demanda.unidadeMedida}
+                                        onChange={(e) => handleInputChangeDemanda(e)}
                                         margin={'m-sm'}
                                         type="select"
                                         options={[
@@ -224,22 +221,22 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
                                 <td style={{ width: '60px', padding: '0 5px' }}>
                                     <InputComponent
                                         name={`qtdeDemandada`}
-                                        value={tamanho.demandas[0].qtdeDemandada}
-                                        onChange={(e) => handleTamanhoInputChange(e)}
+                                        value={demanda.qtdeDemandada}
+                                        onChange={(e) => handleInputChangeDemanda(e)}
                                         margin={'m-sm'}
                                     />
                                 </td>
                                 <td align="center" style={{ width: '80px', padding: '0 5px' }}>
                                     <InputComponent
                                         name={`custoUnitarioDemanda`}
-                                        value={tamanho.demandas[0].custoUnitarioDemanda}
-                                        onChange={(e) => handleTamanhoInputChange(e)}
+                                        value={demanda.custoUnitarioDemanda}
+                                        onChange={(e) => handleInputChangeDemanda(e)}
                                         margin={'m-sm'}
                                     />
                                 </td>
                                 <td style={{ width: '90px', padding: '0 5px' }}></td>
                                 <td style={{ textAlign: 'center', width: '5px', padding: '0 5px' }}>
-                                    <S.Button onClick={handleAddDemanda} type="submit">+</S.Button>
+                                    <S.Button bg={'#07BC2F'} bgHover={'#45a049'} onClick={handleAddDemanda} type="submit">+</S.Button>
                                 </td>
                             </tr>
                         </tbody>
