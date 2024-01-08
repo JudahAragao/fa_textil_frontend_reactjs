@@ -59,8 +59,6 @@ const FormFuncionarioComponent = ({ onUpdateRegister, mode, dado }) => {
             cep: removeSpecialCharacters(inputValuesFuncionario.cep),
         };
 
-        console.log(dataToSend)
-
         if (mode === "cadastro") {
             await api.post('/funcionario', dataToSend)
         } else if (mode === "atualizacao") {

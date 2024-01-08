@@ -12,7 +12,7 @@ export const Container = styled.div`
         font-weight: 700;
     }
 
-    input {
+    input, select {
         width: ${props => props.margin === 'm-lg' ? 'calc(100% - 40px)' : props.margin === 'm-sm' && '100%'};
         height: 35px;
         padding: 5px 10px;
