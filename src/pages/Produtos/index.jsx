@@ -50,7 +50,7 @@ const Produtos = ({ onOpen, onClose }) => {
                     { key: 'tamanho', title: 'Tamanho' },
                     { key: 'precoCusto', title: 'Preç. de Custo' },
                     { key: 'valorProduto', title: 'Preço de Venda' },
-                    { key: 'verMais', title: 'Ver Mais' }
+                    { key: 'acao', title: 'Ação' }
                 ]}
                 onOpen={onOpen}
                 onUpdateRegister={atualizarListaCliente}

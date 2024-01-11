@@ -15,15 +15,13 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
         valorProduto: 0,
         tamanho: '',
     });
-
     const [demanda, setDemanda] = useState({
         descricaoDemanda: '',
         unidadeMedida: '',
         qtdeDemandada: '',
-        custoUnitarioDemanda: '',
+        custoUnitarioDemandado: '',
         tipoDemanda: 'Material'
     })
-
     const [demandas, setDemandas] = useState([])
 
     const [materialIsOpen, setMaterialIsOpen] = useState(true);
@@ -50,7 +48,7 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
             descricaoDemanda: '',
             unidadeMedida: '',
             qtdeDemandada: '',
-            custoUnitarioDemanda: '',
+            custoUnitarioDemandado: '',
             tipoDemanda: 'Material'
         });
     }
@@ -66,21 +64,42 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
 
         const dataToSend = {
             produto: {
-                descricao: produto.descricaoProduto,
+                descricaoProduto: produto.descricaoProduto,
                 valorProduto: produto.valorProduto,
-                tamanhos: [
-                    {
-                        tamanho: produto.tamanho,
-                        demandas: demandas,
-                    }
-                ],
+                tamanho: produto.tamanho,
+                demandas,
             },
         };
 
         console.log(dataToSend)
 
         if (mode === "cadastro") {
-            await api.post('/produto', dataToSend);
+            await api.post('/produto', {
+                descricaoProduto: dataToSend.produto.descricaoProduto,
+                valorProduto: dataToSend.produto.valorProduto
+            }).then(response => {
+                api.post('/tamanhoproduto', {
+                    codProduto: response.data.produtoId,
+                    tamanho: dataToSend.produto.tamanho
+                }).then(response => {
+                    dataToSend.produto.demandas.map(demanda => {
+                        api.post('/demandapproduto', {
+                            tamanhoProdutoId: response.data.tamanhoProdutoId,
+                            descricaoDemanda: demanda.descricaoDemanda,
+                            unidadeMedida: demanda.unidadeMedida,
+                            qtdeDemandada: demanda.qtdeDemandada,
+                            custoUnitarioDemandado: demanda.custoUnitarioDemandado,
+                            tipoDemanda: demanda.tipoDemanda
+                        }).catch(e => {
+                            console.log(e)
+                        })
+                    })
+                }).catch(e => {
+                    console.log(e)
+                })
+            }).catch(e => {
+                console.log(e)
+            })
         } else if (mode === "atualizacao") {
             await api.put(`/produto/${dado.produtoId}`, dataToSend);
         }
@@ -90,14 +109,25 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
 
     useEffect(() => {
         const fetchData = async () => {
+
             try {
-                const response = await api.get(`/produto/${dado.produtoId}`);
-                const produtoData = response.data;
-                setProduto({
-                    descricaoProduto: produtoData.descricaoProduto,
-                    valorProduto: produtoData.valorProduto,
-                    tamanhos: produtoData.tamanhos,
-                });
+                await api.get(`/produto/${dado.produtoId}`)
+                    .then(response => {
+                        setProduto({
+                            descricaoProduto: response.data.descricaoProduto,
+                            valorProduto: response.data.valorProduto,
+                        })
+                        api.get(`/tamanhoproduto/${response.data.produtoId}`)
+                            .then(response => {
+                                setProduto(prevProduto => ({
+                                    ...prevProduto, tamanho: response.data.tamanho
+                                }))
+                                api.get(`/demandapproduto/${response.data.tamanhoProdutoId}`)
+                                    .then(response => {
+                                        setDemandas(response.data)
+                                    })
+                            })
+                    })
             } catch (error) {
                 console.error("Erro ao obter dados do produto:", error);
             }
@@ -183,8 +213,8 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
                                             <td> <p style={{ margin: '0 0 0 10px' }}>{demanda && demanda.descricaoDemanda}</p> </td>
                                             <td style={{ textAlign: 'center' }}>{demanda && demanda.unidadeMedida}</td>
                                             <td style={{ textAlign: 'center' }}>{demanda && demanda.qtdeDemandada}</td>
-                                            <td style={{ textAlign: 'center' }}>{demanda && demanda.custoUnitarioDemanda}</td>
-                                            <td style={{ textAlign: 'center' }}>{demanda && demanda.custoUnitarioDemanda * (demanda && demanda.qtdeDemandada)}</td>
+                                            <td style={{ textAlign: 'center' }}>{demanda && demanda.custoUnitarioDemandado}</td>
+                                            <td style={{ textAlign: 'center' }}>{demanda && demanda.custoUnitarioDemandado * (demanda && demanda.qtdeDemandada)}</td>
                                             <td style={{ textAlign: 'center' }}>
                                                 <S.Button bg={'#D80000'} bgHover={'#b30505'} onClick={() => handleRemoveDemanda(demandaIndex)}>X</S.Button>
                                             </td>
@@ -227,8 +257,8 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
                                 </td>
                                 <td align="center" style={{ width: '80px', padding: '0 5px' }}>
                                     <InputComponent
-                                        name={`custoUnitarioDemanda`}
-                                        value={demanda.custoUnitarioDemanda}
+                                        name={`custoUnitarioDemandado`}
+                                        value={demanda.custoUnitarioDemandado}
                                         onChange={(e) => handleInputChangeDemanda(e)}
                                         margin={'m-sm'}
                                     />
