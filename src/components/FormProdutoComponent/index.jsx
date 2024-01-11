@@ -25,7 +25,6 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
     })
 
     const [demandas, setDemandas] = useState([])
-    const [cadProduto, setCadProduto] = useState({})
 
     const [materialIsOpen, setMaterialIsOpen] = useState(true);
     const [servicoIsOpen, setServicoIsOpen] = useState(false);
@@ -69,21 +68,21 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
             produto: {
                 descricao: produto.descricaoProduto,
                 valorProduto: produto.valorProduto,
-                tamanhos: {
-                    tamanho: produto.tamanho,
-                    demandas: demandas,
-                },
+                tamanhos: [
+                    {
+                        tamanho: produto.tamanho,
+                        demandas: demandas,
+                    }
+                ],
             },
         };
-
-        setCadProduto(dataToSend)
 
         console.log(dataToSend)
 
         if (mode === "cadastro") {
-            await api.post('/produto', cadProduto);
+            await api.post('/produto', dataToSend);
         } else if (mode === "atualizacao") {
-            await api.put(`/produto/${dado.produtoId}`, cadProduto);
+            await api.put(`/produto/${dado.produtoId}`, dataToSend);
         }
 
         await onUpdateRegister();
@@ -144,7 +143,7 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
                         { value: 'G', label: 'G' },
                         { value: 'GG', label: 'GG' },
                         { value: 'XG', label: 'XG' },
-                        
+
                     ]}
                 />
             </div>
