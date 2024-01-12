@@ -232,6 +232,8 @@ const FormClienteJuridicoComponent = ({ onUpdateRegister, mode, dado, initialCli
             cep: removeSpecialCharacters(inputValuesJuridico.cep),
         };
 
+        console.log(dataToSend)
+
         if (mode === "cadastro") {
             await api.post('/clientepjuridica', dataToSend);
         } else if (mode === "atualizacao") {
@@ -311,9 +313,30 @@ const FormClienteJuridicoComponent = ({ onUpdateRegister, mode, dado, initialCli
                 </div>
                 <div className="form-right">
                     <InputComponent
-                        name="site"
-                        label="Site:"
-                        value={inputValuesJuridico.site}
+                        name="complemento"
+                        label="Complemento:"
+                        value={inputValuesJuridico.complemento}
+                        onChange={handleInputChangeJuridico}
+                        margin={'m-sm'}
+                    />
+                    <InputComponent
+                        name="cep"
+                        label="CEP:"
+                        value={inputValuesJuridico.cep}
+                        onChange={handleInputChangeJuridico}
+                        margin={'m-sm'}
+                    />
+                    <InputComponent
+                        name="inscricaoEstadual"
+                        label="Inscrição Estadual:"
+                        value={inputValuesJuridico.inscricaoEstadual}
+                        onChange={handleInputChangeJuridico}
+                        margin={'m-sm'}
+                    />
+                    <InputComponent
+                        name="inscricaoMunicipal"
+                        label="Inscrição Municipal:"
+                        value={inputValuesJuridico.inscricaoMunicipal}
                         onChange={handleInputChangeJuridico}
                         margin={'m-sm'}
                     />
@@ -343,40 +366,19 @@ const FormClienteJuridicoComponent = ({ onUpdateRegister, mode, dado, initialCli
                         onChange={handleInputChangeJuridico}
                         margin={'m-sm'}
                     />
-                    <InputComponent
-                        name="complemento"
-                        label="Complemento:"
-                        value={inputValuesJuridico.complemento}
-                        onChange={handleInputChangeJuridico}
-                        margin={'m-sm'}
-                    />
                 </div>
                 <div className="form-right">
-                    <InputComponent
-                        name="cep"
-                        label="CEP:"
-                        value={inputValuesJuridico.cep}
-                        onChange={handleInputChangeJuridico}
-                        margin={'m-sm'}
-                    />
-                    <InputComponent
-                        name="inscricaoEstadual"
-                        label="Inscrição Estadual:"
-                        value={inputValuesJuridico.inscricaoEstadual}
-                        onChange={handleInputChangeJuridico}
-                        margin={'m-sm'}
-                    />
-                    <InputComponent
-                        name="inscricaoMunicipal"
-                        label="Inscrição Municipal:"
-                        value={inputValuesJuridico.inscricaoMunicipal}
-                        onChange={handleInputChangeJuridico}
-                        margin={'m-sm'}
-                    />
                     <InputComponent
                         name="cnpj"
                         label="CNPJ:"
                         value={inputValuesJuridico.cnpj}
+                        onChange={handleInputChangeJuridico}
+                        margin={'m-sm'}
+                    />
+                    <InputComponent
+                        name="site"
+                        label="Site:"
+                        value={inputValuesJuridico.site}
                         onChange={handleInputChangeJuridico}
                         margin={'m-sm'}
                     />

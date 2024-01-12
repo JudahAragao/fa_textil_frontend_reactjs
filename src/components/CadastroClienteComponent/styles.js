@@ -6,11 +6,9 @@ export const Container = styled.div`
 
     div.input-forms-group {
         display: flex;
-        width: 100%;
 
         div.form-left, div.form-right {
             width: 542px;
-            height: 100%;
         }
 
         div.form-left {

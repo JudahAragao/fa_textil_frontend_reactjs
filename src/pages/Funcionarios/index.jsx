@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import ButtonComponent from "../../components/ButtonComponent";
 
@@ -13,7 +13,7 @@ const Funcionarios = ({ onOpen, onClose }) => {
     // todos os clientes
     const [dados, setDados] = useState([]);
 
-    const getCliente = async (mode, id) => {
+    const getCliente = async () => {
         const response = await api.get("/funcionario")
 
         setDados(response.data)

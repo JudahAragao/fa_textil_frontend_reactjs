@@ -71,8 +71,6 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
             },
         };
 
-        console.log(dataToSend)
-
         if (mode === "cadastro") {
             await api.post('/produto', {
                 descricaoProduto: dataToSend.produto.descricaoProduto,
@@ -101,7 +99,28 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
                 console.log(e)
             })
         } else if (mode === "atualizacao") {
-            await api.put(`/produto/${dado.produtoId}`, dataToSend);
+            await api.put(`/produto/${dado.produtoId}`, {
+                descricaoProduto: dataToSend.produto.descricaoProduto,
+                valorProduto: dataToSend.produto.valorProduto
+            }).then(response => {
+                api.put(`/tamanhoproduto/${response.data.produtoId}`, {
+                    codProduto: response.data.produtoId,
+                    tamanho: dataToSend.produto.tamanho
+                }).then(response => {
+                    dataToSend.produto.demandas.map(demanda => {
+                        api.post(`/demandapproduto/${response.data.tamanhoProdutoId}`, {
+                            tamanhoProdutoId: response.data.tamanhoProdutoId,
+                            descricaoDemanda: demanda.descricaoDemanda,
+                            unidadeMedida: demanda.unidadeMedida,
+                            qtdeDemandada: demanda.qtdeDemandada,
+                            custoUnitarioDemandado: demanda.custoUnitarioDemandado,
+                            tipoDemanda: demanda.tipoDemanda
+                        }).catch(e => {
+                            console.log(e)
+                        })
+                    })
+                })
+            })
         }
 
         await onUpdateRegister();

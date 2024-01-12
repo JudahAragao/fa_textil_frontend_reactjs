@@ -13,6 +13,7 @@ import Funcionarios from '../pages/Funcionarios';
 import PedidosVenda from '../pages/PedidosVenda';
 import Produtos from '../pages/Produtos';
 import Overlay from '../components/Overlay';
+import FormPedido from '../pages/FormPedido';
 
 const RoutesControl = () => {
 
@@ -124,6 +125,18 @@ const RoutesControl = () => {
               exact={true}
               path="/produtos"
               component={Produtos}
+            />
+            <PrivateRoute
+              isModalOpen={isModalOpen}
+              setModalOpen={setModalOpen}
+              modalContent={modalContent}
+              setModalContent={setModalContent}
+              onOpen={handleOpenModal}
+              onClose={handleCloseModal}
+              permission="ROLE_ADMIN"
+              exact={true}
+              path="/cadastropedido"
+              component={FormPedido}
             />
           </div>
 

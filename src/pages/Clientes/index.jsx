@@ -7,13 +7,16 @@ import { useEffect } from "react";
 import api from "../../services/api";
 import CadastroClienteComponent from "../../components/CadastroClienteComponent";
 import TableComponent from "../../components/TableComponent";
+import RoundCheckboxComponent from "../../components/RoundCheckboxComponent";
 
 const Clientes = ({ onOpen, onClose }) => {
 
     const [page, setPage] = useState(1);
 
     // todos os clientes
-    const [dados, setDados] = useState([]);
+    const [dadosPFisica, setDadosPFisica] = useState([]);
+    const [dadosPJuridica, setDadosJuridica] = useState([]);
+    const [clienteType, setClienteType] = useState(1);
 
     const [statusCliente, setStatusCliente] = useState({
         juridica: null,
@@ -57,24 +60,30 @@ const Clientes = ({ onOpen, onClose }) => {
         }
     ]
 
-    const getCliente = async (mode, id) => {
-        const response = await api.get("/clientepfisica")
+    const getCliente = async () => {
+        const responsePessoaFisica = await api.get("/clientepfisica")
+        const responsePessoaJuridica = await api.get("/clientepjuridica")
 
-        setDados(response.data)
+        setDadosPFisica(responsePessoaFisica.data)
+        setDadosJuridica(responsePessoaJuridica.data)
         setStatusCliente(oldStatus => ({
             ...oldStatus,
-            juridica: response.data.filter(item => item.clienteId === 2).length,
-            fisica: response.data.filter(item => item.clienteId === 1).length,
-            ativo: response.data.filter(item => item.ativo === 1).length,
-            inativo: response.data.filter(item => item.ativo === 0).length,
+            juridica: responsePessoaJuridica.data.filter(item => item.clienteId === 2).length,
+            fisica: responsePessoaFisica.data.filter(item => item.clienteId === 1).length,
+            ativo: responsePessoaFisica.data.filter(item => item.ativo === 1).length,
+            inativo: responsePessoaFisica.data.filter(item => item.ativo === 0).length,
             frequentes: 0,
-            total: response.data.length
+            total: responsePessoaFisica.data.length
         }))
     }
 
     const atualizarListaCliente = useCallback(() => {
         getCliente()
     }, [])
+
+    const handleCheckboxChange = (tipo) => {
+        setClienteType(tipo);
+    };
 
     useEffect(() => {
         getCliente()
@@ -106,19 +115,49 @@ const Clientes = ({ onOpen, onClose }) => {
         </S.HeaderContainer>
 
         <S.BodyContainer>
+            <div className="checkbox-group" style={{ display: 'flex' }}>
+                <RoundCheckboxComponent
+                    checked={clienteType === 2}
+                    onChange={() => handleCheckboxChange(2)}
+                    label="Pessoa Jurídica"
+                />
+                <span style={{ margin: '0 15px 0 15px' }}></span>
+                <RoundCheckboxComponent
+                    checked={clienteType === 1}
+                    onChange={() => handleCheckboxChange(1)}
+                    label="Pessoa Física"
+                />
+            </div>
             <TableComponent
-                data={dados}
-                columns={[
-                    { key: 'nome', title: 'Nome' },
-                    { key: 'telefone', title: 'Telefone' },
-                    { key: 'email', title: 'E-mail' },
-                    { key: 'logradouro', title: 'Logradouro' },
-                    { key: 'bairro', title: 'Bairro' },
-                    { key: 'numeroImovel', title: 'N°' },
-                    { key: 'ativo', title: 'Situação' },
-                    { key: 'dataCadastro', title: 'Data Cadastro'},
-                    { key: 'verMais', title: 'Ver Mais' },
-                ]}
+                data={clienteType === 1 ? dadosPFisica : clienteType === 2 ? dadosPJuridica : null}
+                columns={
+                    clienteType === 1
+                        ? [
+                            { key: 'nome', title: 'Nome' },
+                            { key: 'telefone', title: 'Telefone' },
+                            { key: 'email', title: 'E-mail' },
+                            { key: 'logradouro', title: 'Logradouro' },
+                            { key: 'bairro', title: 'Bairro' },
+                            { key: 'numeroImovel', title: 'N°' },
+                            { key: 'ativo', title: 'Situação' },
+                            { key: 'dataCadastro', title: 'Data Cadastro' },
+                            { key: 'acao', title: 'Ação' },
+                        ]
+                        : clienteType === 2 
+                            ? [
+                                { key: 'razaoSocial', title: 'Razão Social' },
+                                { key: 'representante', title: 'Representante' },
+                                { key: 'telefone', title: 'Telefone' },
+                                { key: 'email', title: 'E-mail' },
+                                { key: 'logradouro', title: 'Logradouro' },
+                                { key: 'bairro', title: 'Bairro' },
+                                { key: 'numeroImovel', title: 'N°' },
+                                { key: 'ativo', title: 'Situação' },
+                                { key: 'dataCadastro', title: 'Data Cadastro' },
+                                { key: 'acao', title: 'Ação' },
+                            ] 
+                            : null
+                }
                 onOpen={onOpen}
                 onUpdateRegister={atualizarListaCliente}
                 component={CadastroClienteComponent}

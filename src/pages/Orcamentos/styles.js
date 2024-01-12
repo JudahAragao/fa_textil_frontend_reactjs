@@ -12,7 +12,7 @@ export const Container = styled.div`
 export const HeaderContainer = styled.div`
     height: 210px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
 `
 
 // Conteudo dos status
@@ -56,63 +56,15 @@ export const StatusContent = styled.div`
 
 // Contaudo Botão
 export const BtnContent = styled.div`
-  flex: 1;
-  height: 210px;
-  display: flex;
-  justify-content: flex-end;
+    display: flex;
+    justify-content: flex-end;
 
-  button {
-     margin: 0;
-  }
+    button {
+        margin: 0 0 20px 0;
+    }
 `
-
 
 //Corpo da página
 export const BodyContainer = styled.div`
   width: 100%;
 `
-
-export const TableWrapper = styled.div`
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    color: #10317A;
-    font-family: Roboto;
-    font-size: 20px;
-    font-weight: 700;
-`;
-
-export const TableHeader = styled.tr`
-    background-color: #CBD1DC;
-    width: 100%;
-    display: table;
-    table-layout: fixed;
-`;
-
-export const TableHeaderCell = styled.th`
-    padding: 10px;
-    width: auto;
-`;
-
-export const TableBody = styled.tbody`
-    width: 100%;
-    display: table;
-    table-layout: fixed;
-`;
-
-export const TableRow = styled.tr`
-    border-bottom: 1px solid #ccc;
-`;
-
-export const TableCell = styled.td`
-    padding: 10px;
-    width: auto;
-`;
-
-export const TablePagination = styled.div`
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    padding: 10px;
-`;

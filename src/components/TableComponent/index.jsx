@@ -26,7 +26,7 @@ const TableComponent = ({ data, columns, onUpdateRegister, onOpen, component: Co
             bg={'linear-gradient(85deg, #10317A 6.37%, #0065BA 73.64%)'}
             bgHover={'linear-gradient(85deg, #0065BA 6.37%, #10317A 73.64%)'}
             onClick={() => {
-                onOpen(<Component onUpdateRegister={onUpdateRegister} />);
+                onOpen(<Component onUpdateRegister={onUpdateRegister} mode={'atualizacao'} dado={rowData}/>);
             }}
         >
             <FaRegEdit style={{ fontSize: '20px' }} />
