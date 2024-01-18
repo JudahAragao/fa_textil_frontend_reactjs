@@ -19,6 +19,7 @@ export const ApiRequestProvider = ({ children }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState(null);
     const [mode, setMode] = useState()
+    const [dadosMescalados, setDadosMesclados] = useState([]);
     const [dados, setDados] = useState([]);
     const [dado, setDado] = useState({})
     const [id, setId] = useState();
@@ -52,24 +53,31 @@ export const ApiRequestProvider = ({ children }) => {
             setSwapeForm(2)
         } else if (swapeForm === 2) {
             setSwapeForm(1)
-        } 
+        }
     }
 
     const handleChange = (e) => {
         const name = e.target.name;
         const value = e.target.value;
 
+        const currentDate = formateDate();
+
         if (mode === 'cadastro') {
-            setValues((prevValues) => ({ ...prevValues, ['dataCadastro']: formateDate() }));
-            setValues((prevValues) => ({ ...prevValues, ['dataAlteracao']: formateDate() }));
-        } else if (mode === 'atualizacao') {
-            setValues((prevValues) => ({ ...prevValues, ['dataAlteracao']: formateDate() }));
+            setValues((prevValues) => ({
+                ...prevValues,
+                dataCadastro: currentDate,
+                ativo: 1,
+                clienteId: swapeForm
+            }));
         }
 
-        setValues((prevValues) => ({ ...prevValues, [name]: value }));
+        setValues((prevValues) => ({
+            ...prevValues,
+            [name]: value,
+        }));
     };
 
-    const handleSubmit = async (e, values) => {
+    const handleSubmit = async (e, valuesForm) => {
         e.preventDefault();
 
         // // Função para converter um valor para número, se for uma string que representa um número
@@ -86,9 +94,9 @@ export const ApiRequestProvider = ({ children }) => {
         // console.log(numericValues)
 
         if (mode === 'cadastro') {
-            await api.post(`${routeApi}`, values);
+            await api.post(`${routeApi}`, valuesForm);
         } else if (mode === 'atualizacao') {
-            await api.put(`${routeApi}/${id}`, values);
+            await api.put(`${routeApi}/${id}`, valuesForm);
         }
     };
 
@@ -130,7 +138,9 @@ export const ApiRequestProvider = ({ children }) => {
         setRouteApi,
         dataClear,
         swapeForm,
-        formChanger
+        formChanger,
+        dadosMescalados,
+        setDadosMesclados
     };
 
     return (

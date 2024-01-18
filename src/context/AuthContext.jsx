@@ -53,8 +53,9 @@ const AuthProvider = ({ children }) => {
                 // Realiza as verificações adicionais aqui, por exemplo:
                 // Verificação de token no servidor ou redirecionamento
                 const verifyTokenResponse = await api.get("/token/" + newToken);
+                const storedToken = localStorage.getItem('@PermissionYT:token');
 
-                if (verifyTokenResponse.data.token !== newToken) {
+                if (verifyTokenResponse.data.token !== storedToken) {
                     localStorage.removeItem('@PermissionYT:token');
                     history.push('/login');
                 } else {
@@ -67,7 +68,7 @@ const AuthProvider = ({ children }) => {
             console.error("Error during login:", error);
             return null;
         }
-    }, [history, token]);
+    }, [history]);
 
     const logout = useCallback(() => {
         localStorage.removeItem('@PermissionYT:token');

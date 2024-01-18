@@ -42,49 +42,41 @@ const RoutesControl = () => {
             <MenuSidebar />
             <PrivateRoute
               permission="ROLE_ADMIN"
-              exact={true}
               path="/dashboard"
               component={Dashboard}
             />
             <PrivateRoute
               permission="ROLE_ADMIN"
-              exact={true}
               path="/fabricacao"
               component={Fabricacao}
             />
             <PrivateRoute
               permission="ROLE_ADMIN"
-              exact={true}
               path="/clientes"
               component={Clientes}
             />
             <PrivateRoute
               permission="ROLE_ADMIN"
-              exact={true}
               path="/funcionarios"
               component={Funcionarios}
             />
             <PrivateRoute
               permission="ROLE_ADMIN"
-              exact={true}
               path="/pedidosvenda"
               component={PedidosVenda}
             />
             <PrivateRoute
               permission="ROLE_ADMIN"
-              exact={true}
               path="/orcamento"
               component={Orcamentos}
             />
             <PrivateRoute
               permission="ROLE_ADMIN"
-              exact={true}
               path="/produtos"
               component={Produtos}
             />
             <PrivateRoute
               permission="ROLE_ADMIN"
-              exact={true}
               path="/cadastropedido"
               component={FormPedido}
             />

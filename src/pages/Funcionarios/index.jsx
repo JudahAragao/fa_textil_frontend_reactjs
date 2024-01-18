@@ -4,35 +4,45 @@ import ButtonComponent from "../../components/ButtonComponent";
 
 import * as S from './styles'
 import { useEffect } from "react";
-import api from "../../services/api";
 import TableComponent from "../../components/TableComponent";
 import FormFuncionarioComponent from "../../components/FormFuncionarioComponent";
+import { funcionarioFields } from "../../helpers/formFields";
+import FormComponent from "../../components/FormComponent";
+import { useApiRequestContext } from "../../context/ApiRequestContextProvider";
 
-const Funcionarios = ({ onOpen, onClose }) => {
+const Funcionarios = () => {
 
-    // todos os clientes
-    const [dados, setDados] = useState([]);
+    const {
+        getDados,
+        openModal,
+        routeApi,
+        setRouteApi,
+        setMode,
+        dataClear,
+    } = useApiRequestContext()
 
-    const getCliente = async () => {
-        const response = await api.get("/funcionario")
-
-        setDados(response.data)
-    }
-
-    const atualizarListaCliente = useCallback(() => {
-        getCliente()
-    }, [])
+    const fields = funcionarioFields;
 
     useEffect(() => {
-        getCliente()
-    }, [])
+        setRouteApi('/funcionario')
+        
+        routeApi && getDados()
+    }, [routeApi])
+
+    const formComponent = () => <FormComponent
+        fields={fields}
+    />
 
     return <S.Container>
         <S.HeaderContainer>
             <S.BtnContent>
                 <ButtonComponent
                     label="Novo Orçamento"
-                    onClick={() => onOpen(<FormFuncionarioComponent onUpdateRegister={atualizarListaCliente} mode={'cadastro'} />)}
+                    onClick={() => {
+                        setMode('cadastro')
+                        dataClear()
+                        openModal(formComponent)
+                    }}
                     className="custom-button"
                     typebtn="small"
                     bgcolor="linear-gradient(85deg, #10317A 6.37%, #0065BA 73.64%)"
@@ -42,7 +52,6 @@ const Funcionarios = ({ onOpen, onClose }) => {
 
         <S.BodyContainer>
             <TableComponent
-                data={dados}
                 columns={[
                     { key: 'nome', title: 'Nome' },
                     { key: 'telefone', title: 'Telefone' },
@@ -52,11 +61,9 @@ const Funcionarios = ({ onOpen, onClose }) => {
                     { key: 'numeroImovel', title: 'N°' },
                     { key: 'ativo', title: 'Situação' },
                     { key: 'dataCadastro', title: 'Data Cadastro' },
-                    { key: 'verMais', title: 'Ver Mais' },
+                    { key: 'acao', title: 'Ação' },
                 ]}
-                onOpen={onOpen}
-                onUpdateRegister={atualizarListaCliente}
-                component={FormFuncionarioComponent}
+                component={formComponent}
             />
         </S.BodyContainer>
     </S.Container>

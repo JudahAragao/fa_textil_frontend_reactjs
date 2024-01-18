@@ -1,6 +1,6 @@
 export const clienteJuridicoFields = [
     {
-        name: 'clientId',
+        name: 'clienteId',
         label: 'Pessoa Jurídica:',
     },
     {
@@ -72,7 +72,7 @@ export const clienteFisicoFields = [
     },
     {
         name: 'nome',
-        label: 'Nome:',
+        label: 'Nome do cliente:',
     },
     {
         name: 'telefone',
@@ -115,3 +115,50 @@ export const clienteFisicoFields = [
         label: 'Data de Cadastro:',
     },
 ];
+
+export const funcionarioFields = [
+    {
+        name: 'nome',
+        label: 'Nome do Funcionário:',
+    },
+    {
+        name: 'telefone',
+        label: 'Telefone:',
+    },
+    {
+        name: 'email',
+        label: 'Email:',
+    },
+    {
+        name: 'logradouro',
+        label: 'Logradouro:',
+    },
+    {
+        name: 'numeroImovel',
+        label: 'Número do Imóvel:',
+    },
+    {
+        name: 'bairro',
+        label: 'Bairro:',
+    },
+    {
+        name: 'complemento',
+        label: 'Complemento:',
+    },
+    {
+        name: 'cep',
+        label: 'CEP:',
+    },
+    {
+        name: 'cpf',
+        label: 'CPF:',
+    },
+    {
+        name: 'ativo',
+        label: 'Ativo:',
+    },
+    {
+        name: 'dataCadastro',
+        label: 'Data de Cadastro:',
+    },
+]
