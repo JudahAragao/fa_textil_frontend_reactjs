@@ -1,22 +1,27 @@
-import React, { useCallback, useMemo, useState } from "react";
-
-import ButtonComponent from "../../components/ButtonComponent";
+import React, { useCallback, useState, useEffect } from "react";
+import { useApiRequestContext } from "../../context/ApiRequestContextProvider";
 
 import * as S from './styles'
-import { useEffect } from "react";
 import api from "../../services/api";
 import CadastroClienteComponent from "../../components/CadastroClienteComponent";
 import TableComponent from "../../components/TableComponent";
 import RoundCheckboxComponent from "../../components/RoundCheckboxComponent";
+import ButtonComponent from "../../components/ButtonComponent";
+import FormComponent from '../../components/FormComponent'
+import { clienteFisicoFields, clienteJuridicoFields } from "../../helpers/formFields";
 
-const Clientes = ({ onOpen, onClose }) => {
+const Clientes = () => {
 
-    const [page, setPage] = useState(1);
-
-    // todos os clientes
-    const [dadosPFisica, setDadosPFisica] = useState([]);
-    const [dadosPJuridica, setDadosJuridica] = useState([]);
-    const [clienteType, setClienteType] = useState(1);
+    const {
+        getDados,
+        openModal,
+        routeApi,
+        setRouteApi,
+        setMode,
+        dataClear,
+        swapeForm,
+        formChanger
+    } = useApiRequestContext()
 
     const [statusCliente, setStatusCliente] = useState({
         juridica: null,
@@ -60,12 +65,13 @@ const Clientes = ({ onOpen, onClose }) => {
         }
     ]
 
+    const fields = swapeForm === 1 ? clienteFisicoFields : clienteJuridicoFields;
+
+
     const getCliente = async () => {
         const responsePessoaFisica = await api.get("/clientepfisica")
         const responsePessoaJuridica = await api.get("/clientepjuridica")
 
-        setDadosPFisica(responsePessoaFisica.data)
-        setDadosJuridica(responsePessoaJuridica.data)
         setStatusCliente(oldStatus => ({
             ...oldStatus,
             juridica: responsePessoaJuridica.data.filter(item => item.clienteId === 2).length,
@@ -77,24 +83,34 @@ const Clientes = ({ onOpen, onClose }) => {
         }))
     }
 
-    const atualizarListaCliente = useCallback(() => {
-        getCliente()
-    }, [])
-
-    const handleCheckboxChange = (tipo) => {
-        setClienteType(tipo);
-    };
+    useEffect(() => {
+        if (swapeForm === 1) {
+            setRouteApi('/clientepfisica')
+        } else if (swapeForm === 2) {
+            setRouteApi('/clientepjuridica')
+        }
+        
+        routeApi && getDados()
+    }, [routeApi, swapeForm])
 
     useEffect(() => {
         getCliente()
     }, [])
+
+    const formComponent = () => <FormComponent
+        fields={fields}
+    />
 
     return <S.Container>
         <S.HeaderContainer>
             <S.BtnContent>
                 <ButtonComponent
                     label="Novo Orçamento"
-                    onClick={() => onOpen(<CadastroClienteComponent onUpdateRegister={atualizarListaCliente} mode={'cadastro'} />)}
+                    onClick={() => {
+                        setMode('cadastro')
+                        dataClear()
+                        openModal(formComponent)
+                    }}
                     className="custom-button"
                     typebtn="small"
                     bgcolor="linear-gradient(85deg, #10317A 6.37%, #0065BA 73.64%)"
@@ -117,21 +133,20 @@ const Clientes = ({ onOpen, onClose }) => {
         <S.BodyContainer>
             <div className="checkbox-group" style={{ display: 'flex' }}>
                 <RoundCheckboxComponent
-                    checked={clienteType === 2}
-                    onChange={() => handleCheckboxChange(2)}
+                    checked={swapeForm === 2}
+                    onChange={() => formChanger(2)}
                     label="Pessoa Jurídica"
                 />
                 <span style={{ margin: '0 15px 0 15px' }}></span>
                 <RoundCheckboxComponent
-                    checked={clienteType === 1}
-                    onChange={() => handleCheckboxChange(1)}
+                    checked={swapeForm === 1}
+                    onChange={() => formChanger(1)}
                     label="Pessoa Física"
                 />
             </div>
             <TableComponent
-                data={clienteType === 1 ? dadosPFisica : clienteType === 2 ? dadosPJuridica : null}
                 columns={
-                    clienteType === 1
+                    swapeForm === 1
                         ? [
                             { key: 'nome', title: 'Nome' },
                             { key: 'telefone', title: 'Telefone' },
@@ -143,24 +158,20 @@ const Clientes = ({ onOpen, onClose }) => {
                             { key: 'dataCadastro', title: 'Data Cadastro' },
                             { key: 'acao', title: 'Ação' },
                         ]
-                        : clienteType === 2 
-                            ? [
-                                { key: 'razaoSocial', title: 'Razão Social' },
-                                { key: 'representante', title: 'Representante' },
-                                { key: 'telefone', title: 'Telefone' },
-                                { key: 'email', title: 'E-mail' },
-                                { key: 'logradouro', title: 'Logradouro' },
-                                { key: 'bairro', title: 'Bairro' },
-                                { key: 'numeroImovel', title: 'N°' },
-                                { key: 'ativo', title: 'Situação' },
-                                { key: 'dataCadastro', title: 'Data Cadastro' },
-                                { key: 'acao', title: 'Ação' },
-                            ] 
-                            : null
+                        : [
+                            { key: 'razaoSocial', title: 'Razão Social' },
+                            { key: 'representante', title: 'Representante' },
+                            { key: 'telefone', title: 'Telefone' },
+                            { key: 'email', title: 'E-mail' },
+                            { key: 'logradouro', title: 'Logradouro' },
+                            { key: 'bairro', title: 'Bairro' },
+                            { key: 'numeroImovel', title: 'N°' },
+                            { key: 'ativo', title: 'Situação' },
+                            { key: 'dataCadastro', title: 'Data Cadastro' },
+                            { key: 'acao', title: 'Ação' },
+                        ]
                 }
-                onOpen={onOpen}
-                onUpdateRegister={atualizarListaCliente}
-                component={CadastroClienteComponent}
+                component={formComponent}
             />
         </S.BodyContainer>
     </S.Container>

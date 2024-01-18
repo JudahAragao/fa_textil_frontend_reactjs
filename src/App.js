@@ -1,3 +1,4 @@
+import { ApiRequestProvider } from './context/ApiRequestContextProvider';
 import { AuthProvider } from './context/AuthContext';
 import RoutesControl from './routes';
 import { BrowserRouter } from 'react-router-dom'
@@ -6,7 +7,9 @@ function App() {
 
   return <BrowserRouter>
     <AuthProvider>
-      <RoutesControl />
+      <ApiRequestProvider >
+        <RoutesControl />
+      </ApiRequestProvider>
     </AuthProvider>
   </BrowserRouter>
 

@@ -45,7 +45,7 @@ const Produtos = ({ onOpen, onClose }) => {
             <TableComponent
                 data={dados}
                 columns={[
-                    { key: 'produtoId', title: 'Código' },
+                    { key: 'id', title: 'Código' },
                     { key: 'descricaoProduto', title: 'Descrição' },
                     { key: 'tamanho', title: 'Tamanho' },
                     { key: 'precoCusto', title: 'Preç. de Custo' },

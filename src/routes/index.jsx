@@ -14,21 +14,16 @@ import PedidosVenda from '../pages/PedidosVenda';
 import Produtos from '../pages/Produtos';
 import Overlay from '../components/Overlay';
 import FormPedido from '../pages/FormPedido';
+import { useApiRequestContext } from '../context/ApiRequestContextProvider';
+import { AuthProvider } from '../context/AuthContext';
 
 const RoutesControl = () => {
 
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-
-  const handleOpenModal = (content) => {
-    setModalContent(content);
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalContent(null);
-    setModalOpen(false);
-  };
+  const {
+    modalContent,
+    modalIsOpen,
+    closeModal
+  } = useApiRequestContext()
 
   const privateView = true
 
@@ -38,101 +33,56 @@ const RoutesControl = () => {
       <Route exact={true} path="/login" component={Login} />
       {
         privateView && <>
-          <NavMenu />
+          <AuthProvider>
+            <NavMenu />
+          </AuthProvider>
+
 
           <div style={{ display: 'flex' }}>
             <MenuSidebar />
             <PrivateRoute
-              isModalOpen={isModalOpen}
-              setModalOpen={setModalOpen}
-              modalContent={modalContent}
-              setModalContent={setModalContent}
-              onOpen={handleOpenModal}
-              onClose={handleCloseModal}
               permission="ROLE_ADMIN"
               exact={true}
               path="/dashboard"
               component={Dashboard}
             />
             <PrivateRoute
-              isModalOpen={isModalOpen}
-              setModalOpen={setModalOpen}
-              modalContent={modalContent}
-              setModalContent={setModalContent}
-              onOpen={handleOpenModal}
-              onClose={handleCloseModal}
               permission="ROLE_ADMIN"
               exact={true}
               path="/fabricacao"
               component={Fabricacao}
             />
             <PrivateRoute
-              isModalOpen={isModalOpen}
-              setModalOpen={setModalOpen}
-              modalContent={modalContent}
-              setModalContent={setModalContent}
-              onOpen={handleOpenModal}
-              onClose={handleCloseModal}
               permission="ROLE_ADMIN"
               exact={true}
               path="/clientes"
               component={Clientes}
             />
             <PrivateRoute
-              isModalOpen={isModalOpen}
-              setModalOpen={setModalOpen}
-              modalContent={modalContent}
-              setModalContent={setModalContent}
-              onOpen={handleOpenModal}
-              onClose={handleCloseModal}
               permission="ROLE_ADMIN"
               exact={true}
               path="/funcionarios"
               component={Funcionarios}
             />
             <PrivateRoute
-              isModalOpen={isModalOpen}
-              setModalOpen={setModalOpen}
-              modalContent={modalContent}
-              setModalContent={setModalContent}
-              onOpen={handleOpenModal}
-              onClose={handleCloseModal}
               permission="ROLE_ADMIN"
               exact={true}
               path="/pedidosvenda"
               component={PedidosVenda}
             />
             <PrivateRoute
-              isModalOpen={isModalOpen}
-              setModalOpen={setModalOpen}
-              modalContent={modalContent}
-              setModalContent={setModalContent}
-              onOpen={handleOpenModal}
-              onClose={handleCloseModal}
               permission="ROLE_ADMIN"
               exact={true}
               path="/orcamento"
               component={Orcamentos}
             />
             <PrivateRoute
-              isModalOpen={isModalOpen}
-              setModalOpen={setModalOpen}
-              modalContent={modalContent}
-              setModalContent={setModalContent}
-              onOpen={handleOpenModal}
-              onClose={handleCloseModal}
               permission="ROLE_ADMIN"
               exact={true}
               path="/produtos"
               component={Produtos}
             />
             <PrivateRoute
-              isModalOpen={isModalOpen}
-              setModalOpen={setModalOpen}
-              modalContent={modalContent}
-              setModalContent={setModalContent}
-              onOpen={handleOpenModal}
-              onClose={handleCloseModal}
               permission="ROLE_ADMIN"
               exact={true}
               path="/cadastropedido"
@@ -140,7 +90,7 @@ const RoutesControl = () => {
             />
           </div>
 
-          <Overlay isOpen={isModalOpen} onClose={handleCloseModal}>
+          <Overlay isOpen={modalIsOpen} onClose={closeModal}>
             {modalContent}
           </Overlay>
         </>

@@ -21,23 +21,58 @@ const AuthProvider = ({ children }) => {
         return { token: '', decodedToken: '' };
     });
 
+    // const signIn = useCallback(async ({ login, senha }) => {
+    //     const response = await api.post('/login', {
+    //         login,
+    //         senha
+    //     });
+
+    //     const newToken = response.data;
+    //     const decodedToken = jwtDecode(newToken);
+
+    //     if (decodedToken && decodedToken.exp > Date.now() / 1000) {
+    //         setToken({ token: newToken, decodedToken });
+    //     } else {
+    //         return null;
+    //     }
+
+    //     localStorage.setItem('@PermissionYT:token', newToken);
+    // }, []);
+
     const signIn = useCallback(async ({ login, senha }) => {
-        const response = await api.post('/login', {
-            login,
-            senha
-        });
+        try {
+            const response = await api.post('/login', { login, senha });
 
-        const newToken = response.data;
-        const decodedToken = jwtDecode(newToken);
+            const newToken = response.data;
+            const decodedToken = jwtDecode(newToken);
 
-        if (decodedToken && decodedToken.exp > Date.now() / 1000) {
-            setToken({ token: newToken, decodedToken });
-        } else {
+            if (decodedToken && decodedToken.exp > Date.now() / 1000) {
+                setToken({ token: newToken, decodedToken });
+                localStorage.setItem('@PermissionYT:token', newToken);
+
+                // Realiza as verificações adicionais aqui, por exemplo:
+                // Verificação de token no servidor ou redirecionamento
+                const verifyTokenResponse = await api.get("/token/" + newToken);
+
+                if (verifyTokenResponse.data.token !== newToken) {
+                    localStorage.removeItem('@PermissionYT:token');
+                    history.push('/login');
+                } else {
+                    history.push('/dashboard');
+                }
+            } else {
+                return null;
+            }
+        } catch (error) {
+            console.error("Error during login:", error);
             return null;
         }
+    }, [history, token]);
 
-        localStorage.setItem('@PermissionYT:token', newToken);
-    }, []);
+    const logout = useCallback(() => {
+        localStorage.removeItem('@PermissionYT:token');
+        history.push('/login')
+    }, [])
 
     const userLogged = useCallback(() => {
         const storedToken = localStorage.getItem('@PermissionYT:token');
@@ -49,36 +84,31 @@ const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    // const checkToken = useCallback( async () => {
-    //     const storedToken = localStorage.getItem('@PermissionYT:token');
-    //     try {
-    //         const response = await api.get("/token/" + token.token);
-    //         return response.data.token === storedToken;
-    //     } catch (error) {
-    //         localStorage.removeItem('@PermissionYT:token');
-    //         return false
-    //     }
-    // }, [token.token, setToken]);
+    // const redirectRoute = useCallback(() => {
+    //     history.push('/dashboard')
+    // },[])
 
-    useEffect(() => {
-        const verifyToken = async () => {
-            try {
-                const storedToken = localStorage.getItem('@PermissionYT:token');
-                const response = await api.get("/token/" + storedToken);
+    // useEffect(() => {
+    //     const verifyToken = async () => {
+    //         try {
+    //             const storedToken = localStorage.getItem('@PermissionYT:token');
+    //             const response = await api.get("/token/" + storedToken);
 
-                if (response.data.token !== storedToken) {
-                    localStorage.removeItem('@PermissionYT:token');
-                    history.push('/login')
-                }
+    //             if (response.data.token !== storedToken) {
+    //                 localStorage.removeItem('@PermissionYT:token');
+    //                 history.push('/login')
+    //             } else if (response.data.token === storedToken) {
+    //                 redirectRoute()
+    //             }
 
-            } catch (error) {
-                localStorage.removeItem('@PermissionYT:token');
-                history.push('/login')
-            }
-        };
+    //         } catch (error) {
+    //             localStorage.removeItem('@PermissionYT:token');
+    //             history.push('/login')
+    //         }
+    //     };
 
-        verifyToken();
-    }, []);
+    //     verifyToken();
+    // }, []);
 
     const hasPermission = (roleNecessary) => {
 
@@ -95,7 +125,7 @@ const AuthProvider = ({ children }) => {
         return role === roleNecessary
     }
 
-    return <AuthContext.Provider value={{ token, signIn, userLogged, hasPermission, /*checkToken*/ }}>
+    return <AuthContext.Provider value={{ token, signIn, userLogged, hasPermission, logout }}>
         {children}
     </AuthContext.Provider>
 }
