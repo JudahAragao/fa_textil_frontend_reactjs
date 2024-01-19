@@ -73,7 +73,7 @@ const AuthProvider = ({ children }) => {
     const logout = useCallback(() => {
         localStorage.removeItem('@PermissionYT:token');
         history.push('/login')
-    }, [])
+    }, [history])
 
     const userLogged = useCallback(() => {
         const storedToken = localStorage.getItem('@PermissionYT:token');
@@ -89,27 +89,25 @@ const AuthProvider = ({ children }) => {
     //     history.push('/dashboard')
     // },[])
 
-    // useEffect(() => {
-    //     const verifyToken = async () => {
-    //         try {
-    //             const storedToken = localStorage.getItem('@PermissionYT:token');
-    //             const response = await api.get("/token/" + storedToken);
+    useEffect(() => {
+        const verifyToken = async () => {
+            try {
+                const storedToken = localStorage.getItem('@PermissionYT:token');
+                const response = await api.get("/token/" + storedToken);
 
-    //             if (response.data.token !== storedToken) {
-    //                 localStorage.removeItem('@PermissionYT:token');
-    //                 history.push('/login')
-    //             } else if (response.data.token === storedToken) {
-    //                 redirectRoute()
-    //             }
+                if (response.data.token !== storedToken) {
+                    localStorage.removeItem('@PermissionYT:token');
+                    history.push('/login')
+                }
 
-    //         } catch (error) {
-    //             localStorage.removeItem('@PermissionYT:token');
-    //             history.push('/login')
-    //         }
-    //     };
+            } catch (error) {
+                localStorage.removeItem('@PermissionYT:token');
+                history.push('/login')
+            }
+        };
 
-    //     verifyToken();
-    // }, []);
+        verifyToken();
+    }, []);
 
     const hasPermission = (roleNecessary) => {
 

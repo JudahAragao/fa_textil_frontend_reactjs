@@ -34,7 +34,7 @@ export const Container = styled.div`
         outline: none;
     }
 
-    input[name="clienteId"], input[name="ativo"], input[name="dataCadastro"] {
+    input[name="clienteId"], input[name="codProduto"], input[name="ativo"], input[name="dataCadastro"] {
         display: none;
     }
 `

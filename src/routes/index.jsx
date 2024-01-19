@@ -77,7 +77,7 @@ const RoutesControl = () => {
             />
             <PrivateRoute
               permission="ROLE_ADMIN"
-              path="/cadastropedido"
+              path="/formpedido"
               component={FormPedido}
             />
           </div>

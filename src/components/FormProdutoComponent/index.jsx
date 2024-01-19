@@ -7,8 +7,20 @@ import { ReactComponent as TabServico } from '../../assets/svg/aba-servico.svg';
 import { ReactComponent as TabMaterial } from '../../assets/svg/aba-material.svg';
 
 import * as S from './styles'
+import { useApiRequestContext } from "../../context/ApiRequestContextProvider";
 
-const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
+const FormProdutoComponent = ({ onUpdateRegister }) => {
+
+    const {
+        getDados,
+        openModal,
+        routeApi,
+        setRouteApi,
+        setMode,
+        dataClear,
+        mode,
+        id
+    } = useApiRequestContext()
 
     const [produto, setProduto] = useState({
         descricaoProduto: "",
@@ -71,6 +83,8 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
             },
         };
 
+        console.log(dataToSend)
+
         if (mode === "cadastro") {
             await api.post('/produto', {
                 descricaoProduto: dataToSend.produto.descricaoProduto,
@@ -99,7 +113,7 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
                 console.log(e)
             })
         } else if (mode === "atualizacao") {
-            await api.put(`/produto/${dado.produtoId}`, {
+            await api.put(`/produto/${id}`, {
                 descricaoProduto: dataToSend.produto.descricaoProduto,
                 valorProduto: dataToSend.produto.valorProduto
             }).then(response => {
@@ -123,15 +137,16 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
             })
         }
 
-        await onUpdateRegister();
+        onUpdateRegister();
     };
 
     useEffect(() => {
         const fetchData = async () => {
 
             try {
-                await api.get(`/produto/${dado.produtoId}`)
+                await api.get(`/produto/${id}`)
                     .then(response => {
+                        console.log(response.data)
                         setProduto({
                             descricaoProduto: response.data.descricaoProduto,
                             valorProduto: response.data.valorProduto,
@@ -152,10 +167,10 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
             }
         };
 
-        if (mode === "atualizacao" && dado.produtoId) {
+        if (mode === "atualizacao" && id) {
             fetchData();
         }
-    }, [mode, dado]);
+    }, [mode]);
 
     return <S.Container materialIsOpen={materialIsOpen} servicoIsOpen={servicoIsOpen}>
         <div className="input-forms-group">
@@ -186,12 +201,12 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
                     margin={'m-sm'}
                     type="select"
                     options={[
-                        { value: 'PP', label: 'PP' },
-                        { value: 'P', label: 'P' },
-                        { value: 'M', label: 'M' },
-                        { value: 'G', label: 'G' },
-                        { value: 'GG', label: 'GG' },
-                        { value: 'XG', label: 'XG' },
+                        { value: 'PP', name: 'PP' },
+                        { value: 'P', name: 'P' },
+                        { value: 'M', name: 'M' },
+                        { value: 'G', name: 'G' },
+                        { value: 'GG', name: 'GG' },
+                        { value: 'XG', name: 'XG' },
 
                     ]}
                 />
@@ -258,10 +273,10 @@ const FormProdutoComponent = ({ onUpdateRegister, mode, dado }) => {
                                         margin={'m-sm'}
                                         type="select"
                                         options={[
-                                            { value: 'M', label: 'Metro' },
-                                            { value: 'CM', label: 'Centímetro' },
-                                            { value: 'KG', label: 'Quilograma' },
-                                            { value: 'G', label: 'Grama' }
+                                            { value: 'M', name: 'Metro' },
+                                            { value: 'CM', name: 'Centímetro' },
+                                            { value: 'KG', name: 'Quilograma' },
+                                            { value: 'G', name: 'Grama' }
                                             // Adicione mais opções conforme necessário
                                         ]}
                                     />

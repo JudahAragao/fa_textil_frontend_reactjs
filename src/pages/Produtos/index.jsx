@@ -4,11 +4,9 @@ import ButtonComponent from "../../components/ButtonComponent";
 
 import * as S from './styles'
 import { useEffect } from "react";
-import api from "../../services/api";
-import TableComponent from "../../components/TableComponent";
-import FormFuncionarioComponent from "../../components/FormFuncionarioComponent";
 import FormProdutoComponent from "../../components/FormProdutoComponent";
 import { useApiRequestContext } from "../../context/ApiRequestContextProvider";
+import TableComponentProduto from "../../components/TableComponentProduto";
 
 const Produtos = () => {
 
@@ -18,46 +16,15 @@ const Produtos = () => {
         routeApi,
         setRouteApi,
         setMode,
-        dataClear,
-        dados,
-        setDadosMesclados
+        dataClear
     } = useApiRequestContext()
-
-    const [produtos, setProdutos] = useState([])
-    const [tamanhos, setTamanhos] = useState([])
-
+    
     useEffect(() => {
     
-        setRouteApi('/produto')
+        setRouteApi('/produto/comtamanho')
         routeApi && getDados()
-        setProdutos(dados)
-        dataClear()
-        setRouteApi('/tamanhoproduto')
-        routeApi && getDados()
-        setTamanhos(dados)
-
-
         
-
     }, [routeApi])
-
-    useEffect(() => {
-        const produtosTamanhosAssociados = [];
-
-        produtos.map((produto) => {
-            tamanhos.filter((t) => console.log({'id tamanho:':t.codProduto, 'id Produto':produto.id}))
-            tamanhos.filter((t) => t.codProduto === produto.id)
-                .map((t) => {
-                    produtosTamanhosAssociados.push({
-                        codigoProduto: produto.id,
-                        descricaoProduto: produto.descricaoProduto,
-                        tamanho: t.tamanho,
-                    });
-                });
-        });
-
-        setDadosMesclados(produtosTamanhosAssociados);
-    }, [produtos, tamanhos]);
 
     return <S.Container>
         <S.HeaderContainer>
@@ -77,10 +44,10 @@ const Produtos = () => {
         </S.HeaderContainer>
 
         <S.BodyContainer>
-            <TableComponent
+            <TableComponentProduto
                 columns={[
-                    { key: 'id', title: 'Código' },
-                    { key: 'descricaoProduto', title: 'Descrição' },
+                    { key: 'codProduto', title: 'Código' },
+                    { key: 'descricao', title: 'Descrição' },
                     { key: 'tamanho', title: 'Tamanho' },
                     { key: 'valorProduto', title: 'Preço de Venda' },
                     { key: 'acao', title: 'Ação' }

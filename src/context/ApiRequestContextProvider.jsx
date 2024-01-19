@@ -19,9 +19,9 @@ export const ApiRequestProvider = ({ children }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState(null);
     const [mode, setMode] = useState()
-    const [dadosMescalados, setDadosMesclados] = useState([]);
     const [dados, setDados] = useState([]);
     const [dado, setDado] = useState({})
+    const [dadosMesclados, setDadosMesclados] = useState()
     const [id, setId] = useState();
     const [values, setValues] = useState({});
     const [routeApi, setRouteApi] = useState()
@@ -67,7 +67,8 @@ export const ApiRequestProvider = ({ children }) => {
                 ...prevValues,
                 dataCadastro: currentDate,
                 ativo: 1,
-                clienteId: swapeForm
+                clienteId: swapeForm,
+                codProduto: id
             }));
         }
 
@@ -94,7 +95,8 @@ export const ApiRequestProvider = ({ children }) => {
         // console.log(numericValues)
 
         if (mode === 'cadastro') {
-            await api.post(`${routeApi}`, valuesForm);
+            await api.post(`${routeApi}`, valuesForm)
+                .then(response => setId(response.data.id))
         } else if (mode === 'atualizacao') {
             await api.put(`${routeApi}/${id}`, valuesForm);
         }
@@ -139,7 +141,7 @@ export const ApiRequestProvider = ({ children }) => {
         dataClear,
         swapeForm,
         formChanger,
-        dadosMescalados,
+        dadosMesclados, 
         setDadosMesclados
     };
 

@@ -14,8 +14,9 @@ import "primeicons/primeicons.css";                                //icons
 import './styles.css'
 import * as S from './styles'
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import FormProdutoComponent from "../FormProdutoComponent";
 
-const TableComponent = ({ columns, component, navegateTo }) => {
+const TableComponentProduto = ({ columns, component, navegateTo }) => {
 
     const history = useHistory();
 
@@ -38,14 +39,13 @@ const TableComponent = ({ columns, component, navegateTo }) => {
                 bg={'linear-gradient(85deg, #10317A 6.37%, #0065BA 73.64%)'}
                 bgHover={'linear-gradient(85deg, #0065BA 6.37%, #10317A 73.64%)'}
                 onClick={() => {
+                    setMode('atualizacao')
+                    setId(rowData.id)
                     if (component) {
-                        openModal(component)
+                        openModal(<FormProdutoComponent onUpdateRegister={getDados} />)
                     } else {
                         history.push(navegateTo)
                     }
-                    setValues(rowData)
-                    setMode('atualizacao')
-                    setId(rowData.id)
                 }}
             >
                 <FaRegEdit style={{ fontSize: '20px' }} />
@@ -57,7 +57,7 @@ const TableComponent = ({ columns, component, navegateTo }) => {
         <S.Button
             bg={'linear-gradient(85deg, #990015 6.37%, #ff001a 73.64%)'}
             bgHover={'linear-gradient(85deg, #ff001a 6.37%, #990015 73.64%)'}
-            onClick={ async () => {
+            onClick={async () => {
                 await handleDelete(rowData.id)
                 await getDados()
             }}
@@ -69,14 +69,6 @@ const TableComponent = ({ columns, component, navegateTo }) => {
     const ativoTemplate = (rowData) => (
         <span>{rowData.ativo === 1 ? 'Ativo' : 'Inativo'}</span>
     );
-
-    const filteredColumns = columns.filter(col => {
-        if (col.key === 'acao' || col.key === 'ativo') {
-            return true;  // Mantém colunas especiais como 'acao' e 'ativo'
-        }
-
-        return dados.some(row => row[col.key] !== null && row[col.key] !== undefined);
-    });
 
     return <DataTable
         value={dados}
@@ -92,36 +84,34 @@ const TableComponent = ({ columns, component, navegateTo }) => {
         size="small"
         className="custom-header"
     >
-        {columns.map((col, i) => {
-            return (
-                <Column
-                    key={col.key}
-                    field={col.key}
-                    header={col.title}
-                    filter
-                    filterMatchMode="contains"
-                    className="custom-column-row"
-                    body={(rowData) => {
-                        return (
-                            <>
-                                {col.key !== 'acao' && col.key !== 'ativo' && (
-                                    <span>{rowData[col.key]}</span>
-                                )}
-                                {col.key === 'acao' && col.key !== 'ativo' &&(
-                                    <>
-                                        {viewMoreTemplate(rowData)}
-                                        {deleteTemplate(rowData)}
-                                    </>
-                                )}
-                                {col.key === 'ativo' && col.key !== 'acao' && ativoTemplate(rowData)}
-                            </>
-                        );
-                    }}
-                />
-            )
-        })}
+        {columns.map((col, i) => (
+            <Column
+                key={col.key}
+                field={col.key}
+                header={col.title}
+                filter
+                filterMatchMode="contains"
+                className="custom-column-row"
+                body={(rowData) => {
+                    return (
+                        <>
+                            {col.key !== 'acao' && col.key !== 'ativo' && (
+                                <span>{rowData[col.key]}</span>
+                            )}
+                            {col.key === 'acao' && col.key !== 'ativo' && (
+                                <>
+                                    {viewMoreTemplate(rowData)}
+                                    {deleteTemplate(rowData)}
+                                </>
+                            )}
+                            {col.key === 'ativo' && col.key !== 'acao' && ativoTemplate(rowData)}
+                        </>
+                    );
+                }}
+            />
+        ))}
     </DataTable>
 
 }
 
-export default TableComponent
+export default TableComponentProduto

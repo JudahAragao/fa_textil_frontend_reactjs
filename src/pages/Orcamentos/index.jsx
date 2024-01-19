@@ -6,59 +6,80 @@ import api from "../../services/api";
 import FormFuncionarioComponent from "../../components/FormFuncionarioComponent";
 import TableComponent from "../../components/TableComponent";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useApiRequestContext } from "../../context/ApiRequestContextProvider";
 
-const Orcamentos = ({ onOpen, onClose }) => {
+const Orcamentos = () => {
+
+    const {
+        getDados,
+        openModal,
+        routeApi,
+        setRouteApi,
+        setMode,
+        dataClear,
+        swapeForm,
+        formChanger
+    } = useApiRequestContext()
 
     const history = useHistory();
+
+    // const [statusCliente, setStatusCliente] = useState({
+    //     juridica: null,
+    //     fisica: null,
+    //     ativo: null,
+    //     inativo: null,
+    //     frequentes: null,
+    //     total: null
+    // })
 
     const RedirectCadastroPedido = () => {
         history.push('/cadastropedido')
     }
 
-    // todos os clientes
-    const [dados, setDados] = useState([]);
+    // const getCliente = async () => {
+    //     const response = await api.get("/pedido")
 
-    const getCliente = async () => {
-        const response = await api.get("/pedido")
+    //     setDados(response.data)
+    // }
 
-        setDados(response.data)
-    }
+    // const atualizarListaCliente = useCallback(() => {
+    //     getCliente()
+    // }, [])
 
-    const atualizarListaCliente = useCallback(() => {
-        getCliente()
-    }, [])
+    // const statusWidget = [
+    //     {
+    //         nome: 'Fechados',
+    //         qtde: 196,
+    //         bg: '#07BC2F'
+    //     },
+    //     {
+    //         nome: 'Em Aberto',
+    //         qtde: 30,
+    //         bg: '#0084F3'
+    //     },
+    //     {
+    //         nome: 'Vencido',
+    //         qtde: 13,
+    //         bg: '#FFC700'
+    //     },
+    //     {
+    //         nome: 'Suspenso',
+    //         qtde: 9,
+    //         bg: '#D80000'
+    //     },
+    //     {
+    //         nome: 'Total',
+    //         qtde: 248,
+    //         bg: 'linear-gradient(89deg, #10317A -7.34%, #0065BA 52.69%, #FF6E00 109.09%)'
+    //     }
+    // 
 
     useEffect(() => {
-        getCliente()
-    }, [])
-
-    const statusWidget = [
-        {
-            nome: 'Fechados',
-            qtde: 196,
-            bg: '#07BC2F'
-        },
-        {
-            nome: 'Em Aberto',
-            qtde: 30,
-            bg: '#0084F3'
-        },
-        {
-            nome: 'Vencido',
-            qtde: 13,
-            bg: '#FFC700'
-        },
-        {
-            nome: 'Suspenso',
-            qtde: 9,
-            bg: '#D80000'
-        },
-        {
-            nome: 'Total',
-            qtde: 248,
-            bg: 'linear-gradient(89deg, #10317A -7.34%, #0065BA 52.69%, #FF6E00 109.09%)'
-        }
-    ]
+        setRouteApi('/pedido/pedidostatuscliente')
+        
+        routeApi && getDados()
+    }, [routeApi])
+    
 
 
     return <S.Container>
@@ -73,7 +94,7 @@ const Orcamentos = ({ onOpen, onClose }) => {
                     bgcolor="linear-gradient(85deg, #10317A 6.37%, #0065BA 73.64%)"
                 />
             </S.BtnContent>
-            <S.StatusContent>
+            {/* <S.StatusContent>
                 {
                     statusWidget.map(widget => (
                         <div className="status" style={{ background: `${widget.bg}` }}>
@@ -83,25 +104,19 @@ const Orcamentos = ({ onOpen, onClose }) => {
                     ))
                 }
 
-            </S.StatusContent>
+            </S.StatusContent> */}
         </S.HeaderContainer>
 
         <S.BodyContainer>
             <TableComponent
-                data={dados}
                 columns={[
-                    { key: 'produtoId', title: 'Código' },
+                    { key: 'codPedido', title: 'Código' },
                     { key: 'descricao', title: 'Descrição do Pedido' },
-                    { key: 'qtde', title: 'Qtde Itens' },
-                    { key: 'valor', title: 'Preço de Venda' },
-                    { key: 'bairro', title: 'Preço de Venda' },
                     { key: 'status', title: 'Status' },
-                    { key: 'cliente', title: 'Cliente' },
+                    { key: 'nomeClienteFisico', title: 'Cliente' },
+                    { key: 'nomeClienteJuridica', title: 'Cliente' },
                     { key: 'acao', title: 'Ação' },
                 ]}
-                onOpen={onOpen}
-                onUpdateRegister={atualizarListaCliente}
-                component={FormFuncionarioComponent}
             />
         </S.BodyContainer>
     </S.Container>

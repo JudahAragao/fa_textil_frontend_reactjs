@@ -9,6 +9,7 @@ import ButtonComponent from "../../components/ButtonComponent";
 import * as S from './styles'
 import logoVertical from '../../assets/img/logo-vertical.png'
 import { useAuth } from "../../context/AuthContext";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 
 const Login = () => {
@@ -19,6 +20,7 @@ const Login = () => {
     });
 
     const { signIn } = useAuth()
+    const history = useHistory();
 
     const handleInputChange = (event) => {
 
@@ -35,7 +37,11 @@ const Login = () => {
 
         const { login, senha } = inputValues
 
-        await signIn({login, senha})
+        const result = await signIn({ login, senha })
+        // Se o login for bem-sucedido, redireciona para a página desejada
+        if (result) {
+            history.push('/dashboard');
+        }
     };
 
     return <S.Container>
